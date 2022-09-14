@@ -22,6 +22,7 @@ class Player:
     bumped = Fakse
     lives = 3
     cut = False #has player used uppercut
+    displayDamage = 0
 
     def jump(self):
         self.jumpUp = True
@@ -42,6 +43,9 @@ class Player:
         self.x = 950
         self.y = 500
         self.vy = 0
+        self.vx = 0
+        self.damage = 0
+        self.displayDamage = 0
         if p1.lives == 0:
             global gameOn
             gameOn = False
@@ -88,6 +92,7 @@ class attack:
             if self.hasHit == False:
                 hitplayer.bumped = False
                 hitplayer.damage += self.damage
+                hitplayer.displayDamage += (self.damage * 100)
                 hitplayer.vx = (1 if self.owner.direction == Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 # TODO: make knockback use vectors, based on direction, and potentially randomized
                 hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
                 print(1 + hitplayer.damage)
@@ -105,7 +110,7 @@ class lightAttack(attack):
 
 class upperCut(attack):
     def __init__(self, owner: Player, x, y):
-        super().__init__(owner, 0.15, .1, 1, 50, pygame.Rect(x, y - 45, 20, 50), False)
+        super().__init__(owner, 0.1, .25, 1, 50, pygame.Rect(x, y - 45, 20, 50), False)
 
     def update(self):
         super().update()
@@ -128,7 +133,7 @@ while (gameOn == True):
                 p1.jumpUp = Fakse
             if event.key == pygame.K_UP:
                 p2.jumpUp = Fakse
-            if event.key == pygame.K_q:
+            if event.key == pygame.K_v:
                 qup = True
             if event.key == pygame.K_a:
                 p1.vx = 0
@@ -138,9 +143,9 @@ while (gameOn == True):
                 p2.vx = 0
             if event.key == pygame.K_RIGHT:
                 p2.vx = 0
-            if event.key == pygame.K_KP0:
+            if event.key == pygame.K_KP2:
                 oup = True
-            if event.key == pygame.K_e:
+            if event.key == pygame.K_b:
                 eup = True
             if event.key == pygame.K_KP1:
                 oneup = True
@@ -164,12 +169,12 @@ while (gameOn == True):
     if keys[pygame.K_d] and p1.vx < 7:
         p1.vx += 7/4
         p1.direction = Player.RIGHT
-    if keys[pygame.K_e] and eup == True and p1.cut == False:
+    if keys[pygame.K_b] and eup == True and p1.cut == False:
         attacks.append(upperCut(p1, p1.x, p1.y))
         p1.vy -= 10
         eup = False
         p1.cut = True
-    elif keys[pygame.K_q] and qup == True:
+    elif keys[pygame.K_v] and qup == True:
         attacks.append(lightAttack(p1, p1.x, p1.y))
         qup = False
 
@@ -185,7 +190,11 @@ while (gameOn == True):
     p1.x += p1.vx
 
     p1.ground = Fakse
+
+#death states
     if p1.y >= 1100:
+        p1.death()
+    if p1.y < -300:
         p1.death()
 
 
@@ -203,7 +212,7 @@ while (gameOn == True):
     if keys[pygame.K_RIGHT] and p2.vx < 7:
         p2.vx += 7/4
         p2.direction = Player.RIGHT
-    if keys[pygame.K_KP0] and oup == True:
+    if keys[pygame.K_KP2] and oup == True:
         attacks.append(lightAttack(p2, p2.x, p2.y))
         oup = False
     if keys[pygame.K_KP1] and oneup == True and p2.cut == False:
@@ -222,8 +231,10 @@ while (gameOn == True):
 
     p2.x += p2.vx
     p2.ground = Fakse
-
+#death states:
     if p2.y >= 1100:
+        p2.death()
+    if p2.y  < -300:
         p2.death()
 #player 1 platforms
     if (p1.x+5 >= 200 and p1.x-5 <= 1600 and p1.y+20 >= 690 and p1.y <710):
@@ -267,9 +278,9 @@ while (gameOn == True):
     pygame.draw.rect(screen, (30, 190, 50), (p2.x, p2.y, 20, 20), 150)#player 2
     
     font = pygame.font.Font(None, 100)
-    text = font.render('0', True, (150, 255, 255))
+    text = font.render(str(p2.displayDamage), True, (150, 255, 255))
     screen.blit(text, (1300,750))
-    text = font.render('0', True, (150,255,255))
+    text = font.render(str(p1.displayDamage), True, (150,255,255))
     screen.blit(text, (420,750))
 
     pygame.display.flip()
