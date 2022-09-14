@@ -65,7 +65,7 @@ class attack:
 
     def update(self):
         self.lifetime -= 1 / 60
-        colliding = self.hitbox.collidelistall([pygame.Rect(p1.x, p1.y, 20, 20), pygame.Rect(p2.x, p2.y, 20, 20)]) #TODO: make this code not stupid
+        colliding = self.hitbox.collidelistall([pygame.Rect(p1.x, p1.y, 20, 20), pygame.Rect(p2.x, p2.y, 20, 20)])
         for i in colliding:
             hitplayer = players[i]
             if hitplayer == self.owner:
@@ -152,8 +152,6 @@ while (gameOn == True):
     p1.ground = Fakse
 
 
-
-
 #player 2 inputs and movement - - - - - -
     keys = pygame.key.get_pressed()
     #jump inputs
@@ -235,4 +233,3 @@ while (gameOn == True):
 
 
     pygame.display.flip()
-    
