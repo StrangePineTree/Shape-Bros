@@ -3,12 +3,9 @@ Fakse = False
 import pygame
 pygame.init()
 screen = pygame.display.set_mode((1900, 900))
-pygame.display.set_caption("Super MM Bros 2")
+pygame.display.set_caption("Super MM Bros")
 clock = pygame.time.Clock()
-backrooms = pygame.image.load("backrooms.png")
 
-
-#todo: fix xv being set to 0 when p2 and p1 on ground
 
 class Player:
     LEFT = False
@@ -23,6 +20,8 @@ class Player:
     jumpUp = Fakse
     damage = 0.0
     bumped = Fakse
+    lives = 3
+    cut = False #has player used uppercut
 
     def jump(self):
         self.jumpUp = True
@@ -36,6 +35,20 @@ class Player:
         if (self.ground == False and self.jumps == 0):
             self.vy = -12
             self.jumps += 2
+
+    def death(self):
+        print('player died')
+        self.lives -= 1
+        self.x = 950
+        self.y = 500
+        self.vy = 0
+        if p1.lives == 0:
+            global gameOn
+            gameOn = False
+            print("PLAYER ONE DEFEATED")
+        if p2.lives == 0:
+            gameOn = False
+            print("PLAYER TWO DEFEATED")
 
 players = [Player(), Player()]
 
@@ -52,6 +65,8 @@ gameOn = True
 #viariables for key ups
 qup = True
 oup = True
+eup = True
+oneup = True
 
 class attack:
     def __init__(self, owner: Player, lifetime: float, damage: float, kbx: float, kby: float, hitbox: pygame.Rect, hasHit: bool):
@@ -71,6 +86,7 @@ class attack:
             if hitplayer == self.owner:
                 continue
             if self.hasHit == False:
+                hitplayer.bumped = False
                 hitplayer.damage += self.damage
                 hitplayer.vx = (1 if self.owner.direction == Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 # TODO: make knockback use vectors, based on direction, and potentially randomized
                 hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
@@ -82,12 +98,20 @@ class attack:
                 
 class lightAttack(attack):
     def __init__(self, owner: Player, x, y):
-        super().__init__(owner, 0.25, .1, 30, 50, pygame.Rect(x + (5 if owner.direction == Player.RIGHT else -33), y - 5, 50, 30), False)
+        super().__init__(owner, 0.1, .1, 60, 30, pygame.Rect(x + (5 if owner.direction == Player.RIGHT else -33), y - 5, 50, 30), False)
 
     def update(self):
         super().update()
 
-attacks: list[lightAttack] = []
+class upperCut(attack):
+    def __init__(self, owner: Player, x, y):
+        super().__init__(owner, 0.15, .1, 1, 50, pygame.Rect(x, y - 45, 20, 50), False)
+
+    def update(self):
+        super().update()
+
+attacks: list[lightAttack, upperCut] = []
+
 
 #main game loop: - - - - - - - - - - - - - -
 while (gameOn == True):
@@ -116,6 +140,11 @@ while (gameOn == True):
                 p2.vx = 0
             if event.key == pygame.K_KP0:
                 oup = True
+            if event.key == pygame.K_e:
+                eup = True
+            if event.key == pygame.K_KP1:
+                oneup = True
+
 
 
     #player 1 inputs/movment------------------------------------------------------------
@@ -135,9 +164,15 @@ while (gameOn == True):
     if keys[pygame.K_d] and p1.vx < 7:
         p1.vx += 7/4
         p1.direction = Player.RIGHT
-    if keys[pygame.K_q] and qup == True:
+    if keys[pygame.K_e] and eup == True and p1.cut == False:
+        attacks.append(upperCut(p1, p1.x, p1.y))
+        p1.vy -= 10
+        eup = False
+        p1.cut = True
+    elif keys[pygame.K_q] and qup == True:
         attacks.append(lightAttack(p1, p1.x, p1.y))
         qup = False
+
             
     #makes you fall
     if (p1.ground == Fakse):
@@ -150,6 +185,8 @@ while (gameOn == True):
     p1.x += p1.vx
 
     p1.ground = Fakse
+    if p1.y >= 1100:
+        p1.death()
 
 
 #player 2 inputs and movement - - - - - -
@@ -169,6 +206,11 @@ while (gameOn == True):
     if keys[pygame.K_KP0] and oup == True:
         attacks.append(lightAttack(p2, p2.x, p2.y))
         oup = False
+    if keys[pygame.K_KP1] and oneup == True and p2.cut == False:
+        attacks.append(upperCut(p2, p2.x, p2.y))
+        oneup = False
+        p2.cut = True
+        p2.vy -=10
 
 
 
@@ -181,7 +223,8 @@ while (gameOn == True):
     p2.x += p2.vx
     p2.ground = Fakse
 
-
+    if p2.y >= 1100:
+        p2.death()
 #player 1 platforms
     if (p1.x+5 >= 200 and p1.x-5 <= 1600 and p1.y+20 >= 690 and p1.y <710):
         p1.ground = True
@@ -191,6 +234,7 @@ while (gameOn == True):
         if p1.bumped == False:
             p1.y = 672
             p1.bumped = True
+        p1.cut = Fakse
         
 #player 2 platforms
     if (p2.x+5 >= 200 and p2.x-5 <= 1600 and p2.y+20 >= 690 and p2.y <710):
@@ -201,6 +245,7 @@ while (gameOn == True):
         if p2.bumped == False:
             p2.y = 672
             p2.bumped = TREW
+        p2.cut = False
 
     for a in attacks:
         a.update()
@@ -214,7 +259,7 @@ while (gameOn == True):
     attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
     attacksurface.set_alpha(100)
     for a in attacks:
-        pygame.draw.rect(screen, (200, 50, 50), a.hitbox)
+        pygame.draw.rect(screen, (200, 50, 50), a.hitbox, 5)
 
     screen.blit(attacksurface, (0, 0))
 #attack boxes - - - - - -
@@ -226,10 +271,5 @@ while (gameOn == True):
     screen.blit(text, (1300,750))
     text = font.render('0', True, (150,255,255))
     screen.blit(text, (420,750))
-
-    #backrooms
-    if (p1.y > 2000 and p2.y >2000):
-        screen.blit(backrooms,(0,0))
-
 
     pygame.display.flip()
