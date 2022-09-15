@@ -48,9 +48,12 @@ class Player:
         self.displayDamage = 0
         if p1.lives == 0:
             global gameOn
+            global menu
+            menu = True
             gameOn = False
             print("PLAYER ONE DEFEATED")
         if p2.lives == 0:
+            menu = True
             gameOn = False
             print("PLAYER TWO DEFEATED")
 
@@ -65,7 +68,8 @@ p1.y = 500
 p2.x = 800
 p2.y = 500
 
-gameOn = True
+gameOn = False
+menu = True
 #viariables for key ups
 qup = True
 oup = True
@@ -95,7 +99,6 @@ class attack:
                 hitplayer.displayDamage += (self.damage * 100)
                 hitplayer.vx = (1 if self.owner.direction == Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 # TODO: make knockback use vectors, based on direction, and potentially randomized
                 hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
-                print(1 + hitplayer.damage)
                 self.kby = 0
                 self.kbx = 0
                 self.hasHit = True
@@ -110,15 +113,64 @@ class lightAttack(attack):
 
 class upperCut(attack):
     def __init__(self, owner: Player, x, y):
-        super().__init__(owner, 0.1, .25, 1, 50, pygame.Rect(x, y - 45, 20, 50), False)
+        super().__init__(owner, 0.1, .25, 1, 75, pygame.Rect(x, y - 45, 20, 50), False)
 
     def update(self):
         super().update()
 
-attacks: list[lightAttack, upperCut] = []
+attacks: list[attack] = []
 
 
-#main game loop: - - - - - - - - - - - - - -
+#menu viarables
+pressed = False
+mxpos = 0
+mypos = 0
+mousePos = (mxpos, mypos)
+#menu loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+while menu == True:
+
+    for event in pygame.event.get(): 
+        if event.type == pygame.QUIT:
+            menu = False
+            
+    event = pygame.event.wait()
+
+    
+    pygame.display.set_caption("Monguy games")
+    screen.fill((0,0,15))
+    
+    
+    if event.type == pygame.MOUSEMOTION:
+        mousePos = event.pos
+        
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        pressed = True
+
+    if event.type == pygame.MOUSEBUTTONUP:
+        pressed = False
+        
+    if mousePos[0] > 700 and mousePos[0] < 1100 and mousePos[1] > 300 and mousePos[1] < 500 and pressed == True:
+        gameOn = True
+        menu = Fakse
+        
+        
+# render menu-----------------------------------------------
+    pygame.draw.rect(screen, (70,0,120), (700,300,400,200))
+    
+    
+    font = pygame.font.Font(None, 250)
+    text = font.render("Super MM Bros", True, (150, 255, 255))
+    screen.blit(text, (280,10))
+    font = pygame.font.Font(None, 150)
+    text = font.render("Play", True, (150, 255, 255))
+    screen.blit(text, (800,350))
+
+    
+    pygame.display.flip()
+    
+
+#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 while (gameOn == True):
     clock.tick(60)
     for event in pygame.event.get(): #quit game if x is pressed in top corner
@@ -194,7 +246,7 @@ while (gameOn == True):
 #death states
     if p1.y >= 1100:
         p1.death()
-    if p1.y < -300:
+    if p1.y < -100:
         p1.death()
 
 
@@ -234,7 +286,7 @@ while (gameOn == True):
 #death states:
     if p2.y >= 1100:
         p2.death()
-    if p2.y  < -300:
+    if p2.y  < -100:
         p2.death()
 #player 1 platforms
     if (p1.x+5 >= 200 and p1.x-5 <= 1600 and p1.y+20 >= 690 and p1.y <710):
