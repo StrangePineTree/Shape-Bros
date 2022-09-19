@@ -1,3 +1,4 @@
+aaaa = False
 TREW = True
 Fakse = False
 import pygame
@@ -24,6 +25,7 @@ class Player:
 	lives = 3
 	cut = False #has player used uppercut
 	displayDamage = 0
+	hit = False
 
 	def jump(self):
 		self.jumpUp = True
@@ -52,10 +54,14 @@ class Player:
 			global menu
 			menu = True
 			gameOn = False
+			p1.lives = 3
+			p2.lives = 3
 			print("PLAYER ONE DEFEATED")
 		if p2.lives == 0:
 			menu = True
 			gameOn = False
+			p1.lives = 3
+			p2.lives = 3
 			print("PLAYER TWO DEFEATED")
 
 players = [Player(), Player()]
@@ -103,6 +109,7 @@ class attack:
 				self.kby = 0
 				self.kbx = 0
 				self.hasHit = True
+				hitplayer.hit = True
 
 				
 class lightAttack(attack):
@@ -115,6 +122,13 @@ class lightAttack(attack):
 class upperCut(attack):
 	def __init__(self, owner: Player, x, y):
 		super().__init__(owner, 0.1, .25, 1, 75, pygame.Rect(x, y - 45, 20, 50), False)
+
+	def update(self):
+		super().update()
+
+class BFG(attack):
+	def __init__(self, owner: Player, x, y):
+		super().__init__(owner, 0.1, 10, 175, 100, pygame.Rect(x + (5 if owner.direction == Player.RIGHT else -490), y - 45, 500, 200), False)
 
 	def update(self):
 		super().update()
@@ -140,7 +154,7 @@ buttonlist: list[button] = []
 
 
 buttonlist.append(button((750, 400), (100,100,100)))
-
+buttonlist.append(button((750, 575), (100,100,100)))
 # main loop:
 running = True
 while running:
@@ -149,29 +163,39 @@ while running:
 
 		for e in pygame.event.get():
 			if e.type == pygame.QUIT:
-				menu = False
-				running = False
+				aaaa = True
 			elif e.type == pygame.MOUSEBUTTONDOWN:
 				for b in buttonlist:
 					if b.box.collidepoint(pygame.mouse.get_pos()):
-						gameOn = True
-						menu = Fakse
+						if pygame.mouse.get_pos()[1] < 600:
+							gameOn = True
+							menu = Fakse
+						if pygame.mouse.get_pos()[1] > 600:
+							menu = False
+							running = False
 
 		screen.fill((48, 52, 70))
 
 		for b in buttonlist:
 			b.draw()
 
+		font = pygame.font.Font(None, 100)
+		text = font.render(str('QUIT'), True, (150, 255, 255))
+		screen.blit(text, (815,620))
+		text = font.render(str('PLAY'), True, (150,255,255))
+		screen.blit(text, (815,450))
+		font = pygame.font.Font(None, 250)
+		text = font.render(str('SUPER MM BROS'), True, (150,255,255))
+		screen.blit(text, (250,50))
 		pygame.display.flip()
 
 	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
 		clock.tick(60)
-		for event in pygame.event.get(): #quit game if x is pressed in top corner
+		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				gameOn = Fakse
-				running = False
+				attacks.append(BFG(p1, p1.x, p1.y))
 
 
 	#both player input - - - - - - - - - - - - - - - - -
@@ -212,11 +236,19 @@ while running:
 			pass
 			#will add a mechanic to drop thru platoforms here
 		if keys[pygame.K_a] and p1.vx > -7:
-			p1.vx += -7/4
-			p1.direction = Player.LEFT
+			if p1.hit == False:
+				p1.vx -= 7/4
+				p1.direction = Player.LEFT
+			else:
+				p1.vx -= 7/400
+				p1.direction = Player.LEFT
 		if keys[pygame.K_d] and p1.vx < 7:
-			p1.vx += 7/4
-			p1.direction = Player.RIGHT
+			if p1.hit == False:
+				p1.vx += 7/4
+				p1.direction = Player.RIGHT
+			else:
+				p1.vx += 7/400
+				p1.direction = Player.RIGHT
 		if keys[pygame.K_b] and eup == True and p1.cut == False:
 			attacks.append(upperCut(p1, p1.x, p1.y))
 			p1.vy -= 10
@@ -255,11 +287,19 @@ while running:
 		if keys[pygame.K_DOWN]:
 			pass
 		if keys[pygame.K_LEFT] and p2.vx > -7:
-			p2.vx -= 7/4
-			p2.direction = Player.LEFT
+			if p2.hit == False:
+				p2.vx -= 7/4
+				p2.direction = Player.LEFT
+			else:
+				p2.vx -= 7/400
+				p2.direction = Player.LEFT
 		if keys[pygame.K_RIGHT] and p2.vx < 7:
-			p2.vx += 7/4
-			p2.direction = Player.RIGHT
+			if p2.hit == False:
+				p2.vx += 7/4
+				p2.direction = Player.RIGHT
+			else:
+				p2.vx += 7/400
+				p2.direction = Player.RIGHT
 		if keys[pygame.K_KP2] and oup == True:
 			attacks.append(lightAttack(p2, p2.x, p2.y))
 			oup = False
@@ -294,6 +334,7 @@ while running:
 				p1.y = 672
 				p1.bumped = True
 			p1.cut = Fakse
+			p1.hit = False
 			
 	#player 2 platforms
 		if (p2.x+5 >= 200 and p2.x-5 <= 1600 and p2.y+20 >= 690 and p2.y <710):
@@ -305,6 +346,7 @@ while running:
 				p2.y = 672
 				p2.bumped = TREW
 			p2.cut = False
+			p2.hit = False
 
 		for a in attacks:
 			a.update()
@@ -318,7 +360,7 @@ while running:
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
 		attacksurface.set_alpha(100)
 		for a in attacks:
-			pygame.draw.rect(screen, (200, 50, 50), a.hitbox, 5)
+			pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
 
 		screen.blit(attacksurface, (0, 0))
 	#attack boxes - - - - - -
@@ -345,6 +387,11 @@ while running:
 			pygame.draw.circle(screen, (205, 50, 30), (470,825), 10)
 		if p1.lives >= 3:
 			pygame.draw.circle(screen, (205, 50, 30), (495,825), 10)
+
+
+		if aaaa == True:
+			aaa = pygame.transform.flip(screen, Fakse, True)
+			screen.blit(aaa, (0, 0))
 
 		pygame.display.flip()
 
