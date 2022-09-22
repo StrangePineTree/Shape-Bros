@@ -19,6 +19,7 @@ oup = True
 eup = True
 oneup = True
 
+stocks = 3
 
 attacklist: list[attacks.attack] = []
 
@@ -34,8 +35,8 @@ class button:
 	box: pygame.Rect
 	color: pygame.Color
 
-	def __init__(self, pos: tuple[int, int], color):
-		self.box = pygame.Rect(pos, (300, 150))
+	def __init__(self, pos: tuple[int, int], size: tuple[int, int], color):
+		self.box = pygame.Rect(pos, (size[0], size[1]))
 		self.color = color
 
 	def draw(self):
@@ -45,9 +46,15 @@ class button:
 # create list of button icons:
 buttonlist: list[button] = []
 
+startbutton = button((750, 400), (300, 150), (100,100,100))
+quitbutton = button((750, 575), (300, 150), (100,100,100))
+stockupbutton = button((700, 410), (50, 50), (48, 52, 70))
+stockdownbutton = button((700, 480), (50, 50), (48, 52, 70))
 
-buttonlist.append(button((750, 400), (100,100,100)))
-buttonlist.append(button((750, 575), (100,100,100)))
+buttonlist.append(startbutton)
+buttonlist.append(quitbutton)
+buttonlist.append(stockupbutton)
+buttonlist.append(stockdownbutton)
 # main loop:
 running = True
 while running:
@@ -60,12 +67,16 @@ while running:
 			elif e.type == pygame.MOUSEBUTTONDOWN:
 				for b in buttonlist:
 					if b.box.collidepoint(pygame.mouse.get_pos()):
-						if pygame.mouse.get_pos()[1] < 600:
+						if b is startbutton:
 							gameOn = True
 							menu = Fakse
-						if pygame.mouse.get_pos()[1] > 600:
+						if b is quitbutton:
 							menu = False
 							running = False
+						if b is stockupbutton and stocks < 99:
+							stocks+=1
+						if b is stockdownbutton and stocks > -1:
+							stocks-=1
 
 		screen.fill((48, 52, 70))
 
@@ -80,16 +91,25 @@ while running:
 		font = pygame.font.Font(None, 250)
 		text = font.render(str('SUPER MM BROS'), True, (150,255,255))
 		screen.blit(text, (250,50))
+		font = pygame.font.Font(None, 40)
+		text = font.render(str(stocks), True, (150,255,255))
+		screen.blit(text, (710 if stocks >= 10 else 715,457))
+		pygame.draw.polygon(screen, (200,100,100), [[710, 450], [725, 420], [740, 450]])
+		pygame.draw.polygon(screen, (200,100,100), [[710, 490], [725, 520], [740, 490]])
 		pygame.display.flip()
 
+
+	p1.lives = stocks
+	p2.lives = stocks
 	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
 		clock.tick(60)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				attacklist.append(attacks.BFG(p1, p1.x, p1.y))
-
+				menu = False
+				gameOn = False
+				running = False
 
 		#both player input - - - - - - - - - - - - - - - - -
 			if event.type == pygame.KEYUP:
