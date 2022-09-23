@@ -43,6 +43,10 @@ class button:
 		pygame.draw.rect(screen, self.color, self.box, 0, 8)
 
 
+platformlist: list[pygame.Rect] = [
+	pygame.Rect(200, 690, 1400, 50)
+]
+
 # create list of button icons:
 buttonlist: list[button] = []
 
@@ -75,8 +79,12 @@ while running:
 							running = False
 						if b is stockupbutton and stocks < 99:
 							stocks+=1
+							if stocks == 0:
+								stocks = 1
 						if b is stockdownbutton and stocks > -1:
 							stocks-=1
+							if stocks == 0:
+								stocks = -1
 
 		screen.fill((48, 52, 70))
 
@@ -110,6 +118,14 @@ while running:
 				menu = False
 				gameOn = False
 				running = False
+
+
+
+		#attack cooldowns for both players:
+			if p1.lightAttackCD != 0:
+				p1.lightAttackCD -= 1
+			if p2.lightAttackCD != 0:
+				p2.lightAttackCD -= 1
 
 		#both player input - - - - - - - - - - - - - - - - -
 			if event.type == pygame.KEYUP:
@@ -167,8 +183,9 @@ while running:
 			p1.vy -= 10
 			eup = False
 			p1.cut = True
-		elif keys[pygame.K_v] and qup == True:
+		elif keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0:
 			attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
+			p1.lightAttackCD = 5
 			qup = False
 
 				
@@ -213,9 +230,10 @@ while running:
 			else:
 				p2.vx += 7/400
 				p2.direction = player.Player.RIGHT
-		if keys[pygame.K_KP2] and oup == True:
+		if keys[pygame.K_KP2] or keys[pygame.K_SLASH] and oup == True and p2.lightAttackCD == 0:
 			attacklist.append(attacks.lightAttack(p2, p2.x, p2.y))
 			oup = False
+			p2.lightAttackCD = 5
 		if keys[pygame.K_KP1] and oneup == True and p2.cut == False:
 			attacklist.append(attacks.upperCut(p2, p2.x, p2.y))
 			oneup = False
@@ -238,28 +256,17 @@ while running:
 		if p2.y  < -100:
 			p2.death()
 		#player 1 platforms
-		if (p1.x+5 >= 200 and p1.x-5 <= 1600 and p1.y+20 >= 690 and p1.y <710):
-			p1.ground = True
-			p1.jumps = 0
-			p1.vy = 0
-			p1.vx /= 1.1
-			if p1.bumped == False:
-				p1.y = 672
-				p1.bumped = True
-			p1.cut = Fakse
-			p1.hit = False
-			
-		#player 2 platforms
-		if (p2.x+5 >= 200 and p2.x-5 <= 1600 and p2.y+20 >= 690 and p2.y <710):
-			p2.ground = True
-			p2.jumps = 0
-			p2.vy = 0
-			p2.vx /= 1.1
-			if p2.bumped == False:
-				p2.y = 672
-				p2.bumped = TREW
-			p2.cut = False
-			p2.hit = False
+		for p in players:
+			if pygame.Rect(p.x, p.y, 20, 20).collidelist(platformlist) != -1:
+				p.ground = True
+				p.jumps = 0
+				p.vy = 0
+				p.vx /= 1.1
+				if p.bumped == False:
+					p.y = 672
+					p.bumped = True
+				p.cut = Fakse
+				p.hit = False
 
 		for a in attacklist:
 			a.update(players)
@@ -272,7 +279,7 @@ while running:
 			p1.lives = 3
 			p2.lives = 3
 			print("PLAYER ONE DEFEATED")
-		if p2.lives == 0:
+		if p2.lives == 0: 
 			menu = True
 			gameOn = False
 			p1.lives = 3
@@ -291,7 +298,7 @@ while running:
 		screen.blit(attacksurface, (0, 0))
 		#attack boxes - - - - - -
 		pygame.draw.rect(screen, (205, 50, 30), pygame.Rect(p1.x, p1.y, 20, 20), 150)#player 1
-		pygame.draw.rect(screen, (30, 190, 50), pygame.Rect(p2.x, p2.y, 20, 20), 150)#player 2
+		pygame.draw.circle(screen, (30, 190, 50), (p2.x, p2.y+8), 12)#player 2
 		
 		font = pygame.font.Font(None, 100)
 		text = font.render(str(p2.displayDamage), True, (150, 255, 255))
@@ -306,6 +313,12 @@ while running:
 			pygame.draw.circle(screen, (30, 190, 50), (1350,825), 10)
 		if p2.lives >= 3:
 			pygame.draw.circle(screen, (30, 190, 50), (1375,825), 10)
+		font = pygame.font.Font(None, 30)
+		if p2.lives >= 4:
+			text = font.render(str('+'), True, (30, 190, 50))
+			screen.blit(text, (1390,815))
+			text = font.render(str((p2.lives-3)), True, (30, 190, 50))
+			screen.blit(text, (1400,817))
 	#player 2 socks
 		if p1.lives >= 1:
 			pygame.draw.circle(screen, (205, 50, 30), (445,825), 10)
@@ -313,6 +326,11 @@ while running:
 			pygame.draw.circle(screen, (205, 50, 30), (470,825), 10)
 		if p1.lives >= 3:
 			pygame.draw.circle(screen, (205, 50, 30), (495,825), 10)
+		if p1.lives >= 4:
+			text = font.render(str('+'), True, (205, 50, 30))
+			screen.blit(text, (510,815))
+			text = font.render(str((p1.lives-3)), True, (205, 50, 30))
+			screen.blit(text, (520,817))
 
 
 		if aaaa == True:

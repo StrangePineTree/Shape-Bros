@@ -17,6 +17,7 @@ class Player:
 	cut = False #has player used uppercut
 	displayDamage = 0
 	hit = False
+	lightAttackCD = 0
 
 	def jump(self):
 		self.jumpUp = True
