@@ -1,0 +1,10 @@
+decided to make a change log cuz why not (might forget some stuff or not update this)
+
+9/23:
+Changed the name of the game to 'Super Shape Bros'
+attacks now move with the player that made them rather than being a static hazard
+light attack now has a cooldown
+player 2 is now a circle instead of a square (will eventually add different shapes to choose from that have different abilities)
+changed how main platform collision works
+when above 3 lives a counter shows extra lives
+alt+f4/top right x now close the game instead of using the BFG attack
