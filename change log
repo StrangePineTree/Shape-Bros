@@ -8,3 +8,8 @@ player 2 is now a circle instead of a square (will eventually add different shap
 changed how main platform collision works
 when above 3 lives a counter shows extra lives
 alt+f4/top right x now close the game instead of using the BFG attack
+
+9/26:
+made changes to how players are drawn
+first version of a menu for charectar selection
+added an allattack cooldown
