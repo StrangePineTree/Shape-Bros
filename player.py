@@ -1,8 +1,16 @@
 Fakse = False
+import pygame
 
 class Player:
 	LEFT = False
 	RIGHT = True
+
+	RECT = 0
+	CIRCLE = 1
+	TRI = 2
+	HEXAGON = 3
+	DIAMOND = 4
+
 	x: float | int = 0
 	y: float | int = 0
 	vx: float | int = 0.0
@@ -18,6 +26,9 @@ class Player:
 	displayDamage = 0
 	hit = False
 	lightAttackCD = 0
+	allAttackCD = 0
+	color: tuple[int, int, int] = (0, 0, 0)
+	playerShape: int = RECT#: Player.shape
 
 	def jump(self):
 		self.jumpUp = True
@@ -41,10 +52,15 @@ class Player:
 		self.vx = 0
 		self.damage = 0
 		self.displayDamage = 0
+
+	def draw(self, surface):
+		if self.playerShape == Player.RECT:
+			pygame.draw.rect(surface, self.color, pygame.Rect(self.x, self.y, 20, 20))
+		elif self.playerShape == Player.CIRCLE:
+			pygame.draw.circle(surface, self.color, (self.x + 10, self.y+8), 12)
+
 		
 
 players = [Player(),Player()]
 p1 = players[0]
 p2 = players[1]
-
-#starting positions
