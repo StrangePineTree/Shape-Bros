@@ -13,3 +13,9 @@ alt+f4/top right x now close the game instead of using the BFG attack
 made changes to how players are drawn
 first version of a menu for charectar selection
 added an allattack cooldown
+
+9/27:
+changes to how speed is changed when mid air and far from platform allowing for recovery
+buttons in shape selection menu now work and change the players shape
+stocks now resemble the players shape
+started getting rid of magic numbers
