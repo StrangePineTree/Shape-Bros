@@ -6,8 +6,9 @@ import attacks
 import pygame
 import random
 pygame.init()
-screen = pygame.display.set_mode((1900, 900))
-pygame.display.set_caption("Super MM Bros")
+screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN) #add screen scaling when in window mode
+sX,sY = screen.get_size()
+pygame.display.set_caption("Super Shape Bros")
 clock = pygame.time.Clock()
 
 
@@ -51,7 +52,7 @@ class button:
 
 
 platformlist: list[pygame.Rect] = [
-	pygame.Rect(200, 690, 1400, 50)
+	pygame.Rect(200, sY-300, sX-400, 50)
 ]
 
 # create list of button icons:
@@ -64,13 +65,13 @@ while running:
 	quitbutton = button((750, 575), (300, 150), (100,100,100))
 	stockupbutton = button((700, 410), (50, 50), (48, 52, 70))
 	stockdownbutton = button((700, 480), (50, 50), (48, 52, 70))
-	selectbutton = button((1070, 400), (150, 150), (100,100,100))
+	mapbutton = button((1070, 400), (150, 150), (100,100,100))
 
 	buttonlist.append(startbutton)
 	buttonlist.append(quitbutton)
 	buttonlist.append(stockupbutton)
 	buttonlist.append(stockdownbutton)
-	buttonlist.append(selectbutton)
+	buttonlist.append(mapbutton)
 	while menu == TREW:
 
 		for e in pygame.event.get():
@@ -80,9 +81,8 @@ while running:
 				for b in buttonlist:
 					if b.box.collidepoint(pygame.mouse.get_pos()):
 						if b is startbutton:
-							gameOn = True
 							menu = Fakse
-							select = False
+							select = True
 						if b is quitbutton:
 							menu = False
 							running = False
@@ -95,9 +95,8 @@ while running:
 							stocks-=1
 							if stocks == 0:
 								stocks = -1
-						if b is selectbutton:
-							menu = False
-							select = True
+						if b is mapbutton:
+							pass
 
 		screen.fill((48, 52, 70))
 
@@ -119,8 +118,6 @@ while running:
 		pygame.draw.polygon(screen, (200,100,100), [[710, 490], [725, 520], [740, 490]])
 		pygame.display.flip()
 
-
-
 	buttonlist: list[button] = []
 
 	startbutton = button((750, 700), (300, 150), (100,100,100))
@@ -128,14 +125,14 @@ while running:
 	p1square = button((770, 290), (100, 100), (150,150,150))
 	p1circle = button((660, 290), (100, 100), (150,150,150))
 	p1triangle = button((550, 290), (100, 100), (150,150,150))
-	p1hexagon = button((770, 290), (100, 100), (150,150,150)) #not implimented (DLC coming soon)
-	p1diamond = button((770, 290), (100, 100), (150,150,150))  #not implimented (DLC coming soon)
+	p1hexagon = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
+	p1diamond = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 
 	p2square = button((930, 290), (100, 100), (150,150,150)) 
 	p2circle = button((1040, 290), (100, 100), (150,150,150))
 	p2triangle = button((1150, 290), (100, 100), (150,150,150))
-	p2hexagon = button((770, 290), (100, 100), (150,150,150)) #not implimented (DLC coming soon)
-	p2diamond = button((770, 290), (100, 100), (150,150,150)) #not implimented (DLC coming soon)
+	p2hexagon = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
+	p2diamond = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	
 	buttonlist.append(startbutton)
 	buttonlist.append(p1square)
@@ -145,6 +142,10 @@ while running:
 	buttonlist.append(p2square)
 	buttonlist.append(p2circle)
 	buttonlist.append(p2triangle)
+
+	p1.playerShape = random.randrange(0,3)
+	p2.playerShape = random.randrange(0,3)
+
 	while select:
 		for e in pygame.event.get():
 			if e.type == pygame.QUIT:
@@ -158,6 +159,18 @@ while running:
 							gameOn = True
 							menu = Fakse
 							select = False
+						if b is p1triangle:
+							p1.playerShape = 1
+						if b is p1circle:
+							p1.playerShape = 0
+						if b is p1square:
+							p1.playerShape = 2
+						if b is p2triangle:
+							p2.playerShape = 1
+						if b is p2circle:
+							p2.playerShape = 0
+						if b is p2square:
+							p2.playerShape = 2
 
 
 		screen.fill((48, 52, 70))
@@ -166,6 +179,28 @@ while running:
 
 		for b in buttonlist:
 			b.draw()
+
+
+		pygame.draw.polygon(screen, (205, 50, 30), [[795, 360], [820, 310], [845, 360]])
+		pygame.draw.polygon(screen, (30, 190, 50), [[955, 360], [980, 310], [1005, 360]])
+		pygame.draw.rect(screen, (205, 50, 30), (685, 315, 50, 50))
+		pygame.draw.rect(screen, (30, 190, 50), (1065, 315, 50, 50))
+		pygame.draw.circle(screen, (30, 190, 50), (1200, 340), 25)	
+		pygame.draw.circle(screen, (205, 50, 30), (600, 340), 25)	
+
+		if p1.playerShape == 0:
+			pygame.draw.rect(screen, (205, 50, 30), (765, 565, 100, 100))
+		if p1.playerShape == 1:
+			pygame.draw.circle(screen, (205, 50, 30), (815, 615), 50)	
+		if p1.playerShape == 2:
+			pygame.draw.polygon(screen, (205, 50, 30), [[815, 565], [765, 665], [865, 665]])
+
+		if p2.playerShape == 0:
+			pygame.draw.rect(screen, (30, 190, 50), (934, 565, 100, 100))
+		if p2.playerShape == 1:
+			pygame.draw.circle(screen, (30, 190, 50), (985, 615), 50)	
+		if p2.playerShape == 2:
+			pygame.draw.polygon(screen, (30, 190, 50), [[985, 565], [935, 665], [1035, 665]])
 
 		font = pygame.font.Font(None, 100)
 		text = font.render(str('FIGHT!'), True, (130,215,215))
@@ -181,7 +216,7 @@ while running:
 
 
 	p1.lives = stocks
-	p2.lives = - - - - - - -stocks
+	p2.lives = stocks
 	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
@@ -245,15 +280,21 @@ while running:
 			if p1.hit == False:
 				p1.vx -= 7/4
 				p1.direction = player.Player.LEFT
+			if  p1.hit == True and p1.x < 100 or p1.x > 1800:
+				p1.vx -= 1
+				p1.direction = player.Player.LEFT
 			else:
-				p1.vx -= 7/400
+				p1.vx -= 7/100
 				p1.direction = player.Player.LEFT
 		if keys[pygame.K_d] and p1.vx < 7:
 			if p1.hit == False:
 				p1.vx += 7/4
 				p1.direction = player.Player.RIGHT
+			if  p1.hit == True and p1.x < 100 or p1.x > 1800:
+				p1.vx += 1
+				p1.direction = player.Player.RIGHT
 			else:
-				p1.vx += 7/400
+				p1.vx += 7/100
 				p1.direction = player.Player.RIGHT
 		if keys[pygame.K_b] and eup == True and p1.cut == False and p1.allAttackCD == 0:
 			attacklist.append(attacks.upperCut(p1, p1.x, p1.y))
@@ -261,7 +302,7 @@ while running:
 			eup = False
 			p1.cut = True
 			p1.allAttackCD = 3
-		elif keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
+		if keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
 			attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
 			p1.lightAttackCD = 5
 			qup = False
@@ -292,22 +333,27 @@ while running:
 		#jump inputs
 		if keys[pygame.K_UP] and p2.jumpUp == Fakse:
 			p2.jump()
-		#left right and duck inputs
 		if keys[pygame.K_DOWN]:
 			pass
 		if keys[pygame.K_LEFT] and p2.vx > -7:
 			if p2.hit == False:
 				p2.vx -= 7/4
 				p2.direction = player.Player.LEFT
+			if  p2.hit == True and p2.x < 100 or p2.x > 1800:
+				p2.vx -= 1
+				p2.direction = player.Player.LEFT
 			else:
-				p2.vx -= 7/400
+				p2.vx -= 7/100
 				p2.direction = player.Player.LEFT
 		if keys[pygame.K_RIGHT] and p2.vx < 7:
 			if p2.hit == False:
 				p2.vx += 7/4
 				p2.direction = player.Player.RIGHT
+			if  p2.hit == True and p2.x < 100 or p2.x > 1800:
+				p2.vx += 1
+				p2.direction = player.Player.RIGHT
 			else:
-				p2.vx += 7/400
+				p2.vx += 7/100
 				p2.direction = player.Player.RIGHT
 		if keys[pygame.K_KP2] and oup == True and p2.lightAttackCD == 0 and p2.allAttackCD == 0:
 			attacklist.append(attacks.lightAttack(p2, p2.x, p2.y))
@@ -344,7 +390,7 @@ while running:
 				p.vy = 0
 				p.vx /= 1.1
 				if p.bumped == False:
-					p.y = 672
+					p.y = sY - 320
 					p.bumped = True
 				p.cut = Fakse
 				p.hit = False
@@ -369,7 +415,7 @@ while running:
 
 		#render - - - - - - - - - - - - - - - - 
 		screen.fill((0,0,15))
-		pygame.draw.rect(screen, (100, 100, 100), (200, 690, 1400, 50))#main platform
+		pygame.draw.rect(screen, (100, 100, 100), (200, sY-300, sX-400, 50))#main platform
 		#attack boxes - - - - - 
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
 		attacksurface.set_alpha(100)
@@ -387,13 +433,15 @@ while running:
 		text = font.render(str(p1.displayDamage), True, (150,255,255))
 		screen.blit(text, (420,750))
 
+#FIX STOCKS 
+
 		#stocks
 		if p2.lives >= 1:
-			pygame.draw.circle(screen, (30, 190, 50), (1325,825), 10)
+			p2.drawstock(screen, 1325,825)
 		if p2.lives >= 2:
-			pygame.draw.circle(screen, (30, 190, 50), (1350,825), 10)
+			p2.drawstock(screen, 1350,825)
 		if p2.lives >= 3:
-			pygame.draw.circle(screen, (30, 190, 50), (1375,825), 10)
+			p2.drawstock(screen, 1375,825)
 		font = pygame.font.Font(None, 30)
 		if p2.lives >= 4:
 			text = font.render(str('+'), True, (30, 190, 50))
@@ -402,11 +450,11 @@ while running:
 			screen.blit(text, (1400,817))
 
 		if p1.lives >= 1:
-			pygame.draw.circle(screen, (205, 50, 30), (445,825), 10)
+			p1.drawstock(screen, 445,825)
 		if p1.lives >= 2:
-			pygame.draw.circle(screen, (205, 50, 30), (470,825), 10)
+			p1.drawstock(screen, 470,825)
 		if p1.lives >= 3:
-			pygame.draw.circle(screen, (205, 50, 30), (495,825), 10)
+			p1.drawstock(screen, 495,825)
 		if p1.lives >= 4:
 			text = font.render(str('+'), True, (205, 50, 30))
 			screen.blit(text, (510,815))
