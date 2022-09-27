@@ -28,7 +28,7 @@ class Player:
 	lightAttackCD = 0
 	allAttackCD = 0
 	color: tuple[int, int, int] = (0, 0, 0)
-	playerShape: int = RECT#: Player.shape
+	playerShape: int = -1
 
 	def jump(self):
 		self.jumpUp = True
@@ -58,6 +58,16 @@ class Player:
 			pygame.draw.rect(surface, self.color, pygame.Rect(self.x, self.y, 20, 20))
 		elif self.playerShape == Player.CIRCLE:
 			pygame.draw.circle(surface, self.color, (self.x + 10, self.y+8), 12)
+		elif self.playerShape == Player.TRI:		
+			pygame.draw.polygon(surface, self.color, [[self.x, self.y+20], [self.x+10, self.y], [self.x+20, self.y+20]])
+
+	def drawstock(self, surface, x, y):
+		if self.playerShape == Player.RECT:
+			pygame.draw.rect(surface, self.color, pygame.Rect(x-10, y-10, 20, 20))
+		elif self.playerShape == Player.CIRCLE:
+			pygame.draw.circle(surface, self.color, (x, y), 10)		
+		elif self.playerShape == Player.TRI:		
+			pygame.draw.polygon(surface, self.color, [[x-10, y+10], [x, y-10], [x+10, y+10]])
 
 		
 
