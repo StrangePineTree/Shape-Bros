@@ -33,6 +33,9 @@ p1.y = 500
 p2.x = 1400
 p2.y = 500
 
+print(sX)
+print(sY)
+
 p1.playerShape = player.Player.RECT
 p1.color = (205, 50, 30)
 p2.playerShape = player.Player.CIRCLE
@@ -52,7 +55,7 @@ class button:
 
 
 platformlist: list[pygame.Rect] = [
-	pygame.Rect(200, sY-300, sX-400, 50)
+	pygame.Rect(100, sY-300, sX-400, 50)
 ]
 
 # create list of button icons:
@@ -61,11 +64,11 @@ running = True
 while running:
 	buttonlist: list[button] = []
 
-	startbutton = button((750, 400), (300, 150), (100,100,100))
-	quitbutton = button((750, 575), (300, 150), (100,100,100))
-	stockupbutton = button((700, 410), (50, 50), (48, 52, 70))
-	stockdownbutton = button((700, 480), (50, 50), (48, 52, 70))
-	mapbutton = button((1070, 400), (150, 150), (100,100,100))
+	startbutton = button((sX/2 -150, 400), (300, 150), (100,100,100))
+	quitbutton = button((sX/2 -150, 575), (300, 150), (100,100,100))
+	stockupbutton = button((sX/2- 200, 410), (50, 50), (48, 52, 70))
+	stockdownbutton = button((sX/2-200, 480), (50, 50), (48, 52, 70))
+	mapbutton = button((sX/2+160, 400), (150, 150), (100,100,100))
 
 	buttonlist.append(startbutton)
 	buttonlist.append(quitbutton)
@@ -105,32 +108,32 @@ while running:
 
 		font = pygame.font.Font(None, 100)
 		text = font.render(str('QUIT'), True, (150, 255, 255))
-		screen.blit(text, (815,620))
+		screen.blit(text, (sX/2-90,620))
 		text = font.render(str('PLAY'), True, (150,255,255))
-		screen.blit(text, (815,450))
+		screen.blit(text, (sX/2-90,450))
 		font = pygame.font.Font(None, 190)
 		text = font.render(str('SUPER SHAPE BROS'), True, (150,255,255))
 		screen.blit(text, (250,50))
 		font = pygame.font.Font(None, 40)
 		text = font.render(str(stocks), True, (150,255,255))
-		screen.blit(text, (710 if stocks >= 10 else 715,457))
-		pygame.draw.polygon(screen, (200,100,100), [[710, 450], [725, 420], [740, 450]])
-		pygame.draw.polygon(screen, (200,100,100), [[710, 490], [725, 520], [740, 490]])
+		screen.blit(text, (sX/2-200 if stocks >= 10 else sX/2-194,457))
+		pygame.draw.polygon(screen, (200,100,100), [[sX/2-200, 450], [sX/2-185, 420], [sX/2-170, 450]])
+		pygame.draw.polygon(screen, (200,100,100), [[sX/2-200, 490], [sX/2-185, 520], [sX/2-170, 490]])
 		pygame.display.flip()
 
 	buttonlist: list[button] = []
 
-	startbutton = button((750, 700), (300, 150), (100,100,100))
+	startbutton = button((((sX/2) - 150), 700), (300, 150), (100,100,100))
 
-	p1square = button((770, 290), (100, 100), (150,150,150))
-	p1circle = button((660, 290), (100, 100), (150,150,150))
-	p1triangle = button((550, 290), (100, 100), (150,150,150))
+	p1square = button((sX/2-150, 290), (100, 100), (150,150,150))
+	p1circle = button((sX/2-260, 290), (100, 100), (150,150,150))
+	p1triangle = button((sX/2-370, 290), (100, 100), (150,150,150))
 	p1hexagon = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	p1diamond = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 
-	p2square = button((930, 290), (100, 100), (150,150,150)) 
-	p2circle = button((1040, 290), (100, 100), (150,150,150))
-	p2triangle = button((1150, 290), (100, 100), (150,150,150))
+	p2square = button((sX/2 + 50, 290), (100, 100), (150,150,150)) 
+	p2circle = button((sX/2+160, 290), (100, 100), (150,150,150))
+	p2triangle = button((sX/2 + 270, 290), (100, 100), (150,150,150))
 	p2hexagon = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	p2diamond = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	
@@ -175,40 +178,40 @@ while running:
 
 		screen.fill((48, 52, 70))
 
-		pygame.draw.line(screen, (100,50,50),(900, 200), (900,700),10 )
+		pygame.draw.line(screen, (100,50,50),(sX/2, 200), (sX/2,700),10 )
 
 		for b in buttonlist:
 			b.draw()
 
 
-		pygame.draw.polygon(screen, (205, 50, 30), [[795, 360], [820, 310], [845, 360]])
-		pygame.draw.polygon(screen, (30, 190, 50), [[955, 360], [980, 310], [1005, 360]])
-		pygame.draw.rect(screen, (205, 50, 30), (685, 315, 50, 50))
-		pygame.draw.rect(screen, (30, 190, 50), (1065, 315, 50, 50))
-		pygame.draw.circle(screen, (30, 190, 50), (1200, 340), 25)	
-		pygame.draw.circle(screen, (205, 50, 30), (600, 340), 25)	
+		pygame.draw.polygon(screen, (205, 50, 30), [[sX/2 - 75, 360], [sX/2 - 100, 310], [sX/2-125, 360]])
+		pygame.draw.polygon(screen, (30, 190, 50), [[sX/2+75, 358], [sX/2+100, 308], [sX/2+125, 358]])
+		pygame.draw.rect(screen, (205, 50, 30), (sX/2-235, 315, 50, 50))
+		pygame.draw.rect(screen, (30, 190, 50), (sX/2+185, 315, 50, 50))
+		pygame.draw.circle(screen, (30, 190, 50), (sX/2+320, 340), 25)	
+		pygame.draw.circle(screen, (205, 50, 30), (sX/2-320, 340), 25)	
 
 		if p1.playerShape == 0:
-			pygame.draw.rect(screen, (205, 50, 30), (765, 565, 100, 100))
+			pygame.draw.rect(screen, (205, 50, 30), (sX/2 - 150, 565, 100, 100))
 		if p1.playerShape == 1:
-			pygame.draw.circle(screen, (205, 50, 30), (815, 615), 50)	
+			pygame.draw.circle(screen, (205, 50, 30), (sX/2 -100, 615), 50)	
 		if p1.playerShape == 2:
-			pygame.draw.polygon(screen, (205, 50, 30), [[815, 565], [765, 665], [865, 665]])
+			pygame.draw.polygon(screen, (205, 50, 30), [[sX/2-100, 565], [sX/2 - 150, 665], [sX/2-50, 665]])
 
 		if p2.playerShape == 0:
-			pygame.draw.rect(screen, (30, 190, 50), (934, 565, 100, 100))
+			pygame.draw.rect(screen, (30, 190, 50), (sX/2 + 50, 565, 100, 100))
 		if p2.playerShape == 1:
-			pygame.draw.circle(screen, (30, 190, 50), (985, 615), 50)	
+			pygame.draw.circle(screen, (30, 190, 50), (sX/2 + 100, 615), 50)	
 		if p2.playerShape == 2:
-			pygame.draw.polygon(screen, (30, 190, 50), [[985, 565], [935, 665], [1035, 665]])
+			pygame.draw.polygon(screen, (30, 190, 50), [[sX/2 + 100, 565], [sX/2 + 150, 665], [sX/2 + 50, 665]])
 
 		font = pygame.font.Font(None, 100)
 		text = font.render(str('FIGHT!'), True, (130,215,215))
-		screen.blit(text, (785,750))
+		screen.blit(text, (sX/2 - 118,750))
 		text = font.render(str('Player Two'), True, (30, 190, 50))
-		screen.blit(text, (920,220))
+		screen.blit(text, (sX/2+50,220))
 		text = font.render(str('Player One'), True, (205, 50, 30))
-		screen.blit(text, (520,220))
+		screen.blit(text, (sX/2-410,220))
 		font = pygame.font.Font(None, 190)
 		text = font.render(str('CHOOSE YOUR SHAPE'), True, (150,255,255))
 		screen.blit(text, (200,50))
@@ -217,6 +220,14 @@ while running:
 
 	p1.lives = stocks
 	p2.lives = stocks
+	p1.damage = 0
+	p1.displayDamage = 0
+	p2.displayDamage = 0
+	p2.damage = 0
+	p1.x = 400
+	p1.y = 500
+	p2.x = 1400
+	p2.y = 500
 	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
@@ -415,7 +426,7 @@ while running:
 
 		#render - - - - - - - - - - - - - - - - 
 		screen.fill((0,0,15))
-		pygame.draw.rect(screen, (100, 100, 100), (200, sY-300, sX-400, 50))#main platform
+		pygame.draw.rect(screen, (100, 100, 100), (200, sY-300, sX-400, 20))#main platform
 		#attack boxes - - - - - 
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
 		attacksurface.set_alpha(100)
@@ -429,37 +440,37 @@ while running:
 		
 		font = pygame.font.Font(None, 100)
 		text = font.render(str(p2.displayDamage), True, (150, 255, 255))
-		screen.blit(text, (1300,750))
+		screen.blit(text, (1300,sY-230))
 		text = font.render(str(p1.displayDamage), True, (150,255,255))
-		screen.blit(text, (420,750))
+		screen.blit(text, (420,sY-230))
 
-#FIX STOCKS 
+ 
 
 		#stocks
 		if p2.lives >= 1:
-			p2.drawstock(screen, 1325,825)
+			p2.drawstock(screen, 1325,sY-160)
 		if p2.lives >= 2:
-			p2.drawstock(screen, 1350,825)
+			p2.drawstock(screen, 1350,sY-160)
 		if p2.lives >= 3:
-			p2.drawstock(screen, 1375,825)
+			p2.drawstock(screen, 1375,sY-160)
 		font = pygame.font.Font(None, 30)
 		if p2.lives >= 4:
 			text = font.render(str('+'), True, (30, 190, 50))
-			screen.blit(text, (1390,815))
+			screen.blit(text, (1390,sY-160))
 			text = font.render(str((p2.lives-3)), True, (30, 190, 50))
-			screen.blit(text, (1400,817))
+			screen.blit(text, (1400,sY-160))
 
 		if p1.lives >= 1:
-			p1.drawstock(screen, 445,825)
+			p1.drawstock(screen, 445,sY-160)
 		if p1.lives >= 2:
-			p1.drawstock(screen, 470,825)
+			p1.drawstock(screen, 470,sY-160)
 		if p1.lives >= 3:
-			p1.drawstock(screen, 495,825)
+			p1.drawstock(screen, 495,sY-160)
 		if p1.lives >= 4:
 			text = font.render(str('+'), True, (205, 50, 30))
-			screen.blit(text, (510,815))
+			screen.blit(text, (510,sY-160))
 			text = font.render(str((p1.lives-3)), True, (205, 50, 30))
-			screen.blit(text, (520,817))
+			screen.blit(text, (520,sY-160))
 
 
 		if aaaa == True:
