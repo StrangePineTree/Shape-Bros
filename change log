@@ -19,3 +19,8 @@ changes to how speed is changed when mid air and far from platform allowing for 
 buttons in shape selection menu now work and change the players shape
 stocks now resemble the players shape
 started getting rid of magic numbers
+
+10/3:
+removed most magic numbers
+made menu centered
+made the first idle sprites for p1 and p2 triangle (not in game yet)
