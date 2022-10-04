@@ -21,6 +21,10 @@ oup = True
 eup = True
 oneup = True
 
+p1tri = pygame.image.load('p1 triangle idle.png')
+p2tri = pygame.image.load('p2 triangle idle.png')
+
+
 stocks = 3
 
 attacklist: list[attacks.attack] = []
@@ -52,11 +56,6 @@ class button:
 
 	def draw(self):
 		pygame.draw.rect(screen, self.color, self.box, 0, 8)
-
-
-platformlist: list[pygame.Rect] = [
-	pygame.Rect(100, sY-300, sX-400, 50)
-]
 
 # create list of button icons:
 # main loop:
@@ -228,6 +227,11 @@ while running:
 	p1.y = 500
 	p2.x = 1400
 	p2.y = 500
+
+	platformlist: list[pygame.Rect] = [
+		pygame.Rect(200, sY-300, sX-400, 50)
+	]
+
 	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
@@ -425,7 +429,7 @@ while running:
 			print("PLAYER TWO DEFEATED")
 
 		#render - - - - - - - - - - - - - - - - 
-		screen.fill((0,0,15))
+		screen.fill((30,30,45))
 		pygame.draw.rect(screen, (100, 100, 100), (200, sY-300, sX-400, 20))#main platform
 		#attack boxes - - - - - 
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
@@ -471,6 +475,43 @@ while running:
 			screen.blit(text, (510,sY-160))
 			text = font.render(str((p1.lives-3)), True, (205, 50, 30))
 			screen.blit(text, (520,sY-160))
+
+			#drawing players here - - - - - - - - - -
+		if p1.playerShape == player.Player.TRI:
+			if p1.direction == player.Player.LEFT:
+				p1.RowNum = 1
+				p1.ticker+=1
+				if p1.ticker%20==0: 
+					p1.frameNum+=1
+				if p1.frameNum>1: 
+					p1.frameNum = 0
+			
+			if p1.direction == player.Player.RIGHT:
+				p1.RowNum = 0
+				p1.ticker+=1
+				if p1.ticker%20==0: 
+					p1.frameNum+=1
+				if p1.frameNum>1: 
+					p1.frameNum = 0	
+			screen.blit(p1tri, (p1.x-15, p1.y - 30), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
+		
+		if p2.playerShape == player.Player.TRI:
+			if p2.direction == player.Player.LEFT:
+				p2.RowNum = 1
+				p2.ticker+=1
+				if p2.ticker%20==0: 
+					p2.frameNum+=1
+				if p2.frameNum>1: 
+					p2.frameNum = 0
+			
+			if p2.direction == player.Player.RIGHT:
+				p2.RowNum = 0
+				p2.ticker+=1
+				if p2.ticker%20==0: 
+					p2.frameNum+=1
+				if p2.frameNum>1: 
+					p2.frameNum = 0	
+			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
 
 		if aaaa == True:
