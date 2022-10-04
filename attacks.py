@@ -1,7 +1,6 @@
 import player
 import pygame
 
-
 class attack:
 	def __init__(self, owner: player.Player, lifetime: float, damage: float, kbx: float, kby: float, hitbox: pygame.Rect, hasHit: bool):
 		self.owner = owner
@@ -38,7 +37,9 @@ class lightAttack(attack):
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x + (5 if self.owner.direction == player.Player.RIGHT else -33), self.owner.y - 5)
-		self.owner.vx /= 1.5
+		if self.owner.hit == False:
+			self.owner.vx /= 1.5
+			self.owner.vy /=1.1
 
 class upperCut(attack):
 	def __init__(self, owner: player.Player, x, y):
@@ -47,7 +48,8 @@ class upperCut(attack):
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x, self.owner.y - 45)
-		self.owner.vx /= 4
+		if self.owner.hit == False:
+			self.owner.vx /= 2
 
 
 #bfg not implemented atm
