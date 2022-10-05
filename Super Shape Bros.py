@@ -21,8 +21,8 @@ oup = True
 eup = True
 oneup = True
 
-p1tri = pygame.image.load('p1 triangle idle.png')
-p2tri = pygame.image.load('p2 triangle idle.png')
+p1tri = pygame.image.load('p1 tri idle.png')
+p2tri = pygame.image.load('p2 tri idle.png')
 
 
 stocks = 3
@@ -242,18 +242,6 @@ while running:
 				gameOn = False
 				running = False
 
-
-
-		#attack cooldowns for both players:
-			if p1.lightAttackCD != 0:
-				p1.lightAttackCD -= 1
-			if p2.lightAttackCD != 0:
-				p2.lightAttackCD -= 1
-			if p2.allAttackCD != 0:
-				p2.allAttackCD -= 1
-			if p1.allAttackCD != 0:
-				p1.allAttackCD -= 1
-
 		#both player input - - - - - - - - - - - - - - - - -
 			if event.type == pygame.KEYUP:
 				#checks of keys were released
@@ -265,12 +253,16 @@ while running:
 					qup = True
 				if event.key == pygame.K_a:
 					p1.vx = 0
+					p1.still = True
 				if event.key == pygame.K_d:
 					p1.vx = 0
+					p1.still = True
 				if event.key == pygame.K_LEFT:
 					p2.vx = 0
+					p2.still = True
 				if event.key == pygame.K_RIGHT:
 					p2.vx = 0
+					p2.still = True
 				if event.key == pygame.K_KP2:
 					oup = True
 				if event.key == pygame.K_b:
@@ -278,7 +270,19 @@ while running:
 				if event.key == pygame.K_KP1:
 					oneup = True
 
-
+		#attack cooldowns for both players:
+		if p1.lightAttackCD != 0:
+			p1.lightAttackCD -= 1
+		if p2.lightAttackCD != 0:
+			p2.lightAttackCD -= 1
+		if p2.allAttackCD != 0:
+			p2.allAttackCD -= 1
+		if p1.allAttackCD != 0:
+			p1.allAttackCD -= 1
+		if p1.uppercutCD !=1:
+			p1.uppercutCD -=1
+		if p2.uppercutCD != 1:
+			p2.uppercutCD -=1
 
 		#player 1 inputs/movment------------------------------------------------------------
 		
@@ -316,12 +320,14 @@ while running:
 			p1.vy -= 10
 			eup = False
 			p1.cut = True
-			p1.allAttackCD = 3
+			p1.allAttackCD = 30
+			p1.uppercutCD = 60
 		if keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
+			print("aaa")
 			attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
-			p1.lightAttackCD = 5
+			p1.lightAttackCD = 30
 			qup = False
-			p1.allAttackCD = 5
+			p1.allAttackCD = 30
 
 				
 		#makes you fall
@@ -337,7 +343,7 @@ while running:
 		p1.ground = Fakse
 
 		#death states
-		if p1.y >= 1100:
+		if p1.y >= sY-200:
 			p1.death()
 		if p1.y < -100:
 			p1.death()
@@ -373,14 +379,15 @@ while running:
 		if keys[pygame.K_KP2] and oup == True and p2.lightAttackCD == 0 and p2.allAttackCD == 0:
 			attacklist.append(attacks.lightAttack(p2, p2.x, p2.y))
 			oup = False
-			p2.lightAttackCD = 5
-			p2.allAttackCD = 5
+			p2.lightAttackCD = 30
+			p2.allAttackCD = 30
 		if keys[pygame.K_KP1] and oneup == True and p2.cut == False and p2.allAttackCD == 0:
 			attacklist.append(attacks.upperCut(p2, p2.x, p2.y))
 			oneup = False
 			p2.cut = True
 			p2.vy -=10
-			p2.allAttackCD = 3
+			p2.allAttackCD = 30
+			p2.uppercutCD = 60
 
 
 
@@ -393,7 +400,7 @@ while running:
 		p2.x += p2.vx
 		p2.ground = Fakse
 		#death states:
-		if p2.y >= 1100:
+		if p2.y >= sY + 200:
 			p2.death()
 		if p2.y  < -100:
 			p2.death()
@@ -478,41 +485,97 @@ while running:
 
 			#drawing players here - - - - - - - - - -
 		if p1.playerShape == player.Player.TRI:
-			if p1.direction == player.Player.LEFT:
-				p1.RowNum = 1
-				p1.ticker+=1
-				if p1.ticker%20==0: 
-					p1.frameNum+=1
-				if p1.frameNum>1: 
-					p1.frameNum = 0
-			
-			if p1.direction == player.Player.RIGHT:
-				p1.RowNum = 0
-				p1.ticker+=1
-				if p1.ticker%20==0: 
-					p1.frameNum+=1
-				if p1.frameNum>1: 
-					p1.frameNum = 0	
+
+			if p1.lightAttackCD > 1:
+				p1tri = pygame.image.load('p1 tri Lattack.png')
+
+
+				if p1.direction == player.Player.LEFT:
+					p1.RowNum = 1
+					p1.ticker+=1
+					if p1.ticker%20==0: 
+						p1.frameNum+=1
+					if p1.frameNum>1: 
+						p1.frameNum = 0
+				
+				if p1.direction == player.Player.RIGHT:
+					p1.RowNum = 0
+					p1.ticker+=1
+					if p1.ticker%20==0: 
+						p1.frameNum+=1
+					if p1.frameNum>1: 
+						p1.frameNum = 0	
+			elif p1.uppercutCD > 35:
+				p1tri = pygame.image.load('p1 tri Uattack.png')
+				if p1.direction == player.Player.LEFT:
+					p1.RowNum = 1
+
+				if p1.direction == player.Player.RIGHT:
+					p1.RowNum = 0
+	
+			elif p1.still == True:
+				p1tri = pygame.image.load('p1 tri idle.png')
+
+				if p1.direction == player.Player.LEFT:
+					p1.RowNum = 1
+					p1.ticker+=1
+					if p1.ticker%20==0: 
+						p1.frameNum+=1
+					if p1.frameNum>1: 
+						p1.frameNum = 0
+				
+				if p1.direction == player.Player.RIGHT:
+					p1.RowNum = 0
+					p1.ticker+=1
+					if p1.ticker%20==0: 
+						p1.frameNum+=1
+					if p1.frameNum>1: 
+						p1.frameNum = 0	
+
 			screen.blit(p1tri, (p1.x-15, p1.y - 30), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
 		
 		if p2.playerShape == player.Player.TRI:
-			if p2.direction == player.Player.LEFT:
-				p2.RowNum = 1
-				p2.ticker+=1
-				if p2.ticker%20==0: 
-					p2.frameNum+=1
-				if p2.frameNum>1: 
-					p2.frameNum = 0
-			
-			if p2.direction == player.Player.RIGHT:
-				p2.RowNum = 0
-				p2.ticker+=1
-				if p2.ticker%20==0: 
-					p2.frameNum+=1
-				if p2.frameNum>1: 
-					p2.frameNum = 0	
-			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
+			if p2.lightAttackCD > 1:
+				p2tri = pygame.image.load('p2 tri Lattack.png')
+
+
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0	
+
+			elif p2.still == True:
+				p2tri = pygame.image.load('p2 tri idle.png')
+
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0	
+
+			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
 		if aaaa == True:
 			aaa = pygame.transform.flip(screen, Fakse, True)

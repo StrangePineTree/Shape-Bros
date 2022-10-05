@@ -27,6 +27,7 @@ class Player:
 	hit = False
 	lightAttackCD = 0
 	allAttackCD = 0
+	uppercutCD = 0
 	color: tuple[int, int, int] = (0, 0, 0)
 	playerShape: int = -1
 	#sprite stuff:
@@ -35,6 +36,9 @@ class Player:
 	RowNum = 0 
 	frameNum = 0
 	ticker = 0
+
+	still = True
+
 
 
 

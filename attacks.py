@@ -40,6 +40,38 @@ class lightAttack(attack):
 		if self.owner.hit == False:
 			self.owner.vx /= 1.5
 			self.owner.vy /=1.1
+		
+		if self.owner.direction == player.Player.LEFT:
+			self.owner.RowNum = 1
+			self.owner.ticker+=1
+			if self.owner.ticker%20==0: 
+				self.owner.frameNum+=1
+			if self.owner.frameNum>1: 
+				self.owner.frameNum = 0
+		if self.owner.direction == player.Player.RIGHT:
+			self.owner.RowNum = 0
+			self.owner.ticker+=1
+			if self.owner.ticker%20==0: 
+				self.owner.frameNum+=1
+			if self.owner.frameNum>1: 
+				self.owner.frameNum = 0	
+
+		if self.lifetime == 0.01:
+			if self.owner.direction == player.Player.LEFT and self.owner.still == True:
+				self.owner.RowNum = 1
+				self.owner.ticker+=1
+				if self.owner.ticker%20==0: 
+					self.owner.frameNum+=1
+				if self.owner.frameNum>1: 
+					self.owner.frameNum = 0
+			
+			if self.owner.direction == player.Player.RIGHT and self.owner.still == True:
+				self.owner.RowNum = 0
+				self.owner.ticker+=1
+				if self.owner.ticker%20==0: 
+					self.owner.frameNum+=1
+				if self.owner.frameNum>1: 
+					self.owner.frameNum = 0	
 
 class upperCut(attack):
 	def __init__(self, owner: player.Player, x, y):
