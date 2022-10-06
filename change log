@@ -25,6 +25,10 @@ removed most magic numbers
 made menu centered
 made the first idle sprites for p1 and p2 triangle (not in game yet)
 
-10/4
+10/4:
 you can no longer use an attack to cancel out knockedback
 added animated sprites for triangles
+
+10/5:
+worked on sprites (aaaaaaa)
+fixxed bugs with attack cooldowns (AAAAAAAAAAA)

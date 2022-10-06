@@ -13,7 +13,7 @@ class attack:
 
 	def update(self, players: list[player.Player]):
 		self.lifetime -= 1 / 60
-		colliding = self.hitbox.collidelistall([pygame.Rect(p.x, p.y, 20, 20) for p in players])
+		colliding = self.hitbox.collidelistall([pygame.Rect(p.x-30, p.y-30, 50, 50) for p in players])
 		for i in colliding:
 			hitplayer = players[i]
 			if hitplayer == self.owner:
@@ -24,62 +24,40 @@ class attack:
 				hitplayer.displayDamage += int(self.damage * 100)
 				hitplayer.vx = (1 if self.owner.direction == player.Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 
 				hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
+				print(self.kby)
 				self.kby = 0
 				self.kbx = 0
 				self.hasHit = True
 				hitplayer.hit = True
+				
 
 				
 class lightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.15, .1, 60, 30, pygame.Rect(x + (5 if owner.direction == player.Player.RIGHT else -33), y - 5, 50, 30), False)
+		super().__init__(owner, 0.15, .1, 60, 30, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
 
 	def update(self, players):
 		super().update(players)
-		self.hitbox.topleft = (self.owner.x + (5 if self.owner.direction == player.Player.RIGHT else -33), self.owner.y - 5)
-		if self.owner.hit == False:
-			self.owner.vx /= 1.5
-			self.owner.vy /=1.1
-		
-		if self.owner.direction == player.Player.LEFT:
-			self.owner.RowNum = 1
-			self.owner.ticker+=1
-			if self.owner.ticker%20==0: 
-				self.owner.frameNum+=1
-			if self.owner.frameNum>1: 
-				self.owner.frameNum = 0
-		if self.owner.direction == player.Player.RIGHT:
-			self.owner.RowNum = 0
-			self.owner.ticker+=1
-			if self.owner.ticker%20==0: 
-				self.owner.frameNum+=1
-			if self.owner.frameNum>1: 
-				self.owner.frameNum = 0	
+		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -45), self.owner.y - 20)
 
-		if self.lifetime == 0.01:
-			if self.owner.direction == player.Player.LEFT and self.owner.still == True:
-				self.owner.RowNum = 1
-				self.owner.ticker+=1
-				if self.owner.ticker%20==0: 
-					self.owner.frameNum+=1
-				if self.owner.frameNum>1: 
-					self.owner.frameNum = 0
-			
-			if self.owner.direction == player.Player.RIGHT and self.owner.still == True:
-				self.owner.RowNum = 0
-				self.owner.ticker+=1
-				if self.owner.ticker%20==0: 
-					self.owner.frameNum+=1
-				if self.owner.frameNum>1: 
-					self.owner.frameNum = 0	
 
 class upperCut(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.2, .25, 1, 75, pygame.Rect(x, y - 45, 20, 50), False)
+		super().__init__(owner, 0.2, (.25 * (-((owner.vy/20) - 10)if owner.vy <0 else 1)), 1, (75 * (-((owner.vy/40) - 10)if owner.vy <0 else 1)), pygame.Rect(x, y - 65, 25, 80), False)
 
 	def update(self, players):
 		super().update(players)
-		self.hitbox.topleft = (self.owner.x, self.owner.y - 45)
+		self.hitbox.topleft = (self.owner.x-2, self.owner.y - 65)
+		if self.owner.hit == False:
+			self.owner.vx /= 2
+
+class burst(attack):
+	def __init__(self, owner: player.Player, x, y):
+		super().__init__(owner, 0.2, .25 , 1, 75 , pygame.Rect(x-25, y - 75, 100, 100), False)
+
+	def update(self, players):
+		super().update(players)
+		self.hitbox.topleft = (self.owner.x-25, self.owner.y - 75)
 		if self.owner.hit == False:
 			self.owner.vx /= 2
 

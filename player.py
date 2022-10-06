@@ -38,6 +38,8 @@ class Player:
 	ticker = 0
 
 	still = True
+	falling = False
+	moving = False
 
 
 
@@ -78,6 +80,14 @@ class Player:
 			pygame.draw.circle(surface, self.color, (x, y), 10)		
 		elif self.playerShape == Player.TRI:		
 			pygame.draw.polygon(surface, self.color, [[x-10, y+10], [x, y-10], [x+10, y+10]])
+
+	def fall(self):
+		if self.ground == False:
+			self.vy += 1
+			self.falling = True
+		if self.ground == True:
+			self.falling = False
+		
 
 		
 
