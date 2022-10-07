@@ -23,6 +23,8 @@ oneup = True
 
 p1tri = pygame.image.load('p1 tri idle.png')
 p2tri = pygame.image.load('p2 tri idle.png')
+p1circ = pygame.image.load('p1 circ idle.png')
+
 
 
 stocks = 3
@@ -287,6 +289,14 @@ while running:
 			p1.uppercutCD -=1
 		if p2.uppercutCD != 1:
 			p2.uppercutCD -=1
+		if p1.burstCD != 0:
+			p1.burstCD -=1
+		if p1.burstCD == 80:
+			attacklist.append(attacks.burst(p1, p1.x, p1.y))
+		if p2.burstCD != 0:
+			p2.burstCD -=1
+		if p1.burstCD == 100:
+			attacklist.append(attacks.burst(p2, p2.x, p2.y))
 
 		p1.fall()
 		p2.fall()
@@ -324,21 +334,18 @@ while running:
 				p1.vx += 7/100
 				p1.direction = player.Player.RIGHT
 			p1.moving = True
-		if keys[pygame.K_b] and eup == True and p1.cut == False and p1.allAttackCD == 0:
-			if p1.playerShape == player.Player.CIRCLE:
-				attacklist.append(attacks.burst(p1,p1.x,p1.y))
-				p1.cut = True
+		if keys[pygame.K_b] and eup == True and p1.allAttackCD == 0:
+			if p1.playerShape == player.Player.CIRCLE and p1.burstCD == 0:
 				p1.allAttackCD = 30
-				p1.uppercutCD = 60				
-			else:
-				attacklist.append(attacks.upperCut(p1, p1.x, p1.y))
-				p1.vy -= 10
+				p1.burstCD = 120
+			elif p1.cut == False and p1.uppercutCD == 0:
 				eup = False
 				p1.cut = True
 				p1.allAttackCD = 30
-				p1.uppercutCD = 60
+				p1.uppercutCD = 60				
+				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
+
 		if keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
-			print("aaa")
 			attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
 			p1.lightAttackCD = 30
 			qup = False
@@ -448,7 +455,8 @@ while running:
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
 		attacksurface.set_alpha(100)
 		for a in attacklist:
-			pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
+			if type(a) != attacks.burst:
+				pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
 
 		screen.blit(attacksurface, (0, 0))
 		#attack boxes - - - - - -
@@ -623,6 +631,37 @@ while running:
 						p2.frameNum = 0	
 
 			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
+
+		if p1.playerShape == player.Player.CIRCLE:
+			if p1.burstCD > 1:
+				p1.frameHeight = 200
+				p1.frameWidth = 200
+				blitPos = (p1.x-100,p1.y-100)
+
+				p1circ = pygame.image.load('p1 circ Battack.png')
+				p1.RowNum = 0
+				p1.ticker+=1
+				if p1.ticker%6==0: 
+					p1.frameNum+=1
+				if p1.frameNum>5: 
+					p1.frameNum = 0
+
+			else:
+				p1circ = pygame.image.load('p1 circ idle.png')
+				blitPos = (p1.x-25,p1.y-25)
+				p1.frameHeight = 49
+				p1.frameWidth = 100
+
+				if p1.direction == player.Player.LEFT:
+					p1.RowNum = 0
+					p1.frameNum = 2
+				
+				if p1.direction == player.Player.RIGHT:
+					p1.RowNum = 0
+					p1.frameNum = 0
+
+		screen.blit(p1circ, (blitPos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
+
 
 		if aaaa == True:
 			aaa = pygame.transform.flip(screen, Fakse, True)

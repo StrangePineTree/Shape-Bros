@@ -1,5 +1,7 @@
 import player
 import pygame
+import math
+burtattack = True
 
 class attack:
 	def __init__(self, owner: player.Player, lifetime: float, damage: float, kbx: float, kby: float, hitbox: pygame.Rect, hasHit: bool):
@@ -19,16 +21,26 @@ class attack:
 			if hitplayer == self.owner:
 				continue
 			if self.hasHit == False:
-				hitplayer.bumped = False
-				hitplayer.damage += self.damage
-				hitplayer.displayDamage += int(self.damage * 100)
-				hitplayer.vx = (1 if self.owner.direction == player.Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 
-				hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
-				print(self.kby)
-				self.kby = 0
-				self.kbx = 0
-				self.hasHit = True
-				hitplayer.hit = True
+				if not burtattack:
+					hitplayer.bumped = False
+					hitplayer.damage += self.damage
+					hitplayer.displayDamage += int(self.damage * 100)
+					hitplayer.vx = (1 if self.owner.direction == player.Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 
+					hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
+					self.kby = 0
+					self.kbx = 0
+					self.hasHit = True
+					hitplayer.hit = True
+				if self.hasHit == False and (math.sqrt((self.owner.x - hitplayer.x)**2 + (self.owner.y - hitplayer.y)**2)) <= 100 and burtattack == True:
+					hitplayer.bumped = False
+					hitplayer.damage += self.damage
+					hitplayer.displayDamage += int(self.damage * 100)
+					hitplayer.vx = (1 if self.owner.direction == player.Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 
+					hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
+					self.kby = 0
+					self.kbx = 0
+					self.hasHit = True
+					hitplayer.hit = True
 				
 
 				
@@ -52,12 +64,13 @@ class upperCut(attack):
 			self.owner.vx /= 2
 
 class burst(attack):
+	burtattack = True
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.2, .25 , 1, 75 , pygame.Rect(x-25, y - 75, 100, 100), False)
+		super().__init__(owner, 0.33, .25 , 1, 75 , pygame.Rect(x, y, 4000, 2000), False)
 
 	def update(self, players):
 		super().update(players)
-		self.hitbox.topleft = (self.owner.x-25, self.owner.y - 75)
+		self.hitbox.topleft = (self.owner.x-2000, self.owner.y - 00)
 		if self.owner.hit == False:
 			self.owner.vx /= 2
 

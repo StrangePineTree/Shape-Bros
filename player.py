@@ -28,6 +28,7 @@ class Player:
 	lightAttackCD = 0
 	allAttackCD = 0
 	uppercutCD = 0
+	burstCD = 0
 	color: tuple[int, int, int] = (0, 0, 0)
 	playerShape: int = -1
 	#sprite stuff:
