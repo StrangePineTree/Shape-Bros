@@ -41,7 +41,7 @@ class Player:
 	still = True
 	falling = False
 	moving = False
-	blitpos = (0,0)
+	blitpos = (-100,-100)
 
 
 
@@ -52,12 +52,18 @@ class Player:
 		if(self.ground == True and self.jumps == 0):
 			self.vy=-20
 			self.jumps += 1
+			if self.hit == True:
+				self.vx + (5 if self.direction == 2 else -5)
 		if (self.ground == Fakse and self.jumps >=1 and self.jumps <= 3):
 			self.vy = -12
 			self.jumps+=1
+			if self.hit == True:
+				self.vx + (5 if self.direction == 2 else -5)
 		if (self.ground == False and self.jumps == 0):
 			self.vy = -12
 			self.jumps += 2
+			if self.hit == True:
+				self.vx + (5 if self.direction == 2 else -5)
 
 	def death(self):
 		print('player died')

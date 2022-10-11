@@ -290,14 +290,22 @@ while running:
 			p1.uppercutCD -=1
 		if p2.uppercutCD != 1:
 			p2.uppercutCD -=1
+
 		if p1.burstCD != 0:
 			p1.burstCD -=1
-		if p1.burstCD == 55:
+		if p1.burstCD == 174:
 			attacklist.append(attacks.burst(p1, p1.x, p1.y))
+		if p1.burstCD >130:
+			if p1.hit == False:
+				p1.vx /=2
+
 		if p2.burstCD != 0:
 			p2.burstCD -=1
-		if p2.burstCD == 100:
+		if p2.burstCD == 174:
 			attacklist.append(attacks.burst(p2, p2.x, p2.y))
+		if p2.burstCD >130:
+			if p2.hit == Fakse:
+				p2.vx /=2
 
 		p1.fall()
 		p2.fall()
@@ -337,8 +345,8 @@ while running:
 			p1.moving = True
 		if keys[pygame.K_b] and eup == True and p1.allAttackCD == 0:
 			if p1.playerShape == player.Player.CIRCLE and p1.burstCD == 0:
-				p1.allAttackCD = 30
-				p1.burstCD = 120
+				p1.allAttackCD = 90
+				p1.burstCD = 180
 			elif p1.cut == False and p1.uppercutCD == 0:
 				eup = False
 				p1.cut = True
@@ -347,10 +355,16 @@ while running:
 				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
 
 		if keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
-			attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
-			p1.lightAttackCD = 30
-			qup = False
-			p1.allAttackCD = 30
+			if p1.playerShape == player.Player.CIRCLE:
+				attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
+				p1.lightAttackCD = 30
+				qup = False
+				p1.allAttackCD = 30			
+			else:
+				attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
+				p1.lightAttackCD = 25
+				qup = False
+				p1.allAttackCD = 26
 
 			
 		p1.y += p1.vy
@@ -400,12 +414,15 @@ while running:
 			p2.lightAttackCD = 30
 			p2.allAttackCD = 30
 		if keys[pygame.K_KP1] and oneup == True and p2.cut == False and p2.allAttackCD == 0:
-			attacklist.append(attacks.upperCut(p2, p2.x, p2.y))
-			oneup = False
-			p2.cut = True
-			p2.vy -=10
-			p2.allAttackCD = 30
-			p2.uppercutCD = 60
+			if p2.playerShape == player.Player.CIRCLE and p2.burstCD == 0:
+				p2.allAttackCD = 90
+				p2.burstCD = 180
+			elif p2.cut == False and p2.uppercutCD == 0:
+				eup = False
+				p2.cut = True
+				p2.allAttackCD = 30
+				p2.uppercutCD = 60				
+				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
 
 		p2.y += p2.vy
 
@@ -456,8 +473,8 @@ while running:
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
 		attacksurface.set_alpha(100)
 		for a in attacklist:
-			#if a != type(a) != attacks.burst:
-			pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
+			if a != type(a) != attacks.burst:
+				pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
 
 		screen.blit(attacksurface, (0, 0))
 		#attack boxes - - - - - -
@@ -634,7 +651,7 @@ while running:
 			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
 		if p1.playerShape == player.Player.CIRCLE:
-			if p1.burstCD > 40:
+			if p1.burstCD > 130:
 				p1.frameHeight = 200
 				p1.frameWidth = 200
 				p1.blitpos = (p1.x-100,p1.y-100)
@@ -642,10 +659,31 @@ while running:
 				p1circ = pygame.image.load('p1 circ Battack.png')
 				p1.RowNum = 0
 				p1.ticker+=1
-				if p1.ticker%10==0: 
+				if p1.ticker%6==0: 
 					p1.frameNum+=1
 				if p1.frameNum>5: 
 					p1.frameNum = 5
+
+			if p1.lightAttackCD > 0:
+				p1.frameHeight = 49
+				p1.frameWidth = 150
+				p1.blitpos = (p1.x-75,p1.y-25)
+				p1circ = pygame.image.load('p1 circ Lattack.png')
+				if p1.direction == player.Player.LEFT:
+					p1.RowNum = 1
+					p1.ticker+=1
+					if p1.ticker%5==0: 
+						p1.frameNum+=1
+					if p1.frameNum>3: 
+						p1.frameNum = 0
+				
+				if p1.direction == player.Player.RIGHT:
+					p1.RowNum = 0
+					p1.ticker+=1
+					if p1.ticker%5==0: 
+						p1.frameNum+=1
+					if p1.frameNum>3: 
+						p1.frameNum = 0	
 
 			else:
 				p1circ = pygame.image.load('p1 circ idle.png')
@@ -662,8 +700,11 @@ while running:
 					p1.frameNum = 0
 
 		screen.blit(p1circ, (p1.blitpos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
-
-
+		'''
+		for debugging:
+				pygame.draw.rect(screen, (100, 100, 100), (p1.x, p1.y, 10, 10))
+				pygame.draw.rect(screen, (100, 100, 100), (p2.x, p2.y, 10, 10))
+		'''
 		if aaaa == True:
 			aaa = pygame.transform.flip(screen, Fakse, True)
 			screen.blit(aaa, (0, 0))
