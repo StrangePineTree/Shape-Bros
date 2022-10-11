@@ -66,11 +66,11 @@ class upperCut(attack):
 class burst(attack):
 	burtattack = True
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.33, .25 , 1, 75 , pygame.Rect(x, y, 4000, 2000), False)
+		super().__init__(owner, 0.2, .25 , 1, 75 , pygame.Rect(x, y, 400, 400), False)
 
 	def update(self, players):
 		super().update(players)
-		self.hitbox.topleft = (self.owner.x-2000, self.owner.y - 00)
+		self.hitbox.topleft = (self.owner.x-200, self.owner.y-200)
 		if self.owner.hit == False:
 			self.owner.vx /= 2
 

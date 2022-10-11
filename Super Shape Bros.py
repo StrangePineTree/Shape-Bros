@@ -39,6 +39,7 @@ p1.y = 500
 p2.x = 1400
 p2.y = 500
 
+
 print(sX)
 print(sY)
 
@@ -291,11 +292,11 @@ while running:
 			p2.uppercutCD -=1
 		if p1.burstCD != 0:
 			p1.burstCD -=1
-		if p1.burstCD == 80:
+		if p1.burstCD == 55:
 			attacklist.append(attacks.burst(p1, p1.x, p1.y))
 		if p2.burstCD != 0:
 			p2.burstCD -=1
-		if p1.burstCD == 100:
+		if p2.burstCD == 100:
 			attacklist.append(attacks.burst(p2, p2.x, p2.y))
 
 		p1.fall()
@@ -455,8 +456,8 @@ while running:
 		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
 		attacksurface.set_alpha(100)
 		for a in attacklist:
-			if type(a) != attacks.burst:
-				pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
+			#if a != type(a) != attacks.burst:
+			pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
 
 		screen.blit(attacksurface, (0, 0))
 		#attack boxes - - - - - -
@@ -633,22 +634,22 @@ while running:
 			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
 		if p1.playerShape == player.Player.CIRCLE:
-			if p1.burstCD > 1:
+			if p1.burstCD > 40:
 				p1.frameHeight = 200
 				p1.frameWidth = 200
-				blitPos = (p1.x-100,p1.y-100)
+				p1.blitpos = (p1.x-100,p1.y-100)
 
 				p1circ = pygame.image.load('p1 circ Battack.png')
 				p1.RowNum = 0
 				p1.ticker+=1
-				if p1.ticker%6==0: 
+				if p1.ticker%10==0: 
 					p1.frameNum+=1
 				if p1.frameNum>5: 
-					p1.frameNum = 0
+					p1.frameNum = 5
 
 			else:
 				p1circ = pygame.image.load('p1 circ idle.png')
-				blitPos = (p1.x-25,p1.y-25)
+				p1.blitpos = (p1.x-25,p1.y-25)
 				p1.frameHeight = 49
 				p1.frameWidth = 100
 
@@ -660,7 +661,7 @@ while running:
 					p1.RowNum = 0
 					p1.frameNum = 0
 
-		screen.blit(p1circ, (blitPos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
+		screen.blit(p1circ, (p1.blitpos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
 
 
 		if aaaa == True:

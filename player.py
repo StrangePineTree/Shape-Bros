@@ -41,6 +41,7 @@ class Player:
 	still = True
 	falling = False
 	moving = False
+	blitpos = (0,0)
 
 
 
