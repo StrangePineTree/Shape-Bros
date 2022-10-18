@@ -43,9 +43,9 @@ p2.y = 500
 print(sX)
 print(sY)
 
-p1.playerShape = player.Player.RECT
+p1.playerShape = 'rect'
 p1.color = (205, 50, 30)
-p2.playerShape = player.Player.CIRCLE
+p2.playerShape = 'circ'
 p2.color = (30, 190, 50)
 
 #menu viarables
@@ -147,9 +147,11 @@ while running:
 	buttonlist.append(p2square)
 	buttonlist.append(p2circle)
 	buttonlist.append(p2triangle)
-
-	p1.playerShape = random.randrange(0,3)
-	p2.playerShape = random.randrange(0,3)
+	#actually randomize the shape here
+	randshape = 'circ'
+	p1.playerShape = randshape
+	randshape = 'tri'
+	p2.playerShape = randshape
 
 	while select:
 		for e in pygame.event.get():
@@ -165,17 +167,17 @@ while running:
 							menu = Fakse
 							select = False
 						if b is p1triangle:
-							p1.playerShape = 1
+							p1.playerShape = 'tri'
 						if b is p1circle:
-							p1.playerShape = 0
+							p1.playerShape = 'circ'
 						if b is p1square:
-							p1.playerShape = 2
+							p1.playerShape = 'rect'
 						if b is p2triangle:
-							p2.playerShape = 1
+							p2.playerShape = 'tri'
 						if b is p2circle:
-							p2.playerShape = 0
+							p2.playerShape = 'circ'
 						if b is p2square:
-							p2.playerShape = 2
+							p2.playerShape = 'rect'
 
 
 		screen.fill((48, 52, 70))
@@ -193,18 +195,18 @@ while running:
 		pygame.draw.circle(screen, (30, 190, 50), (sX/2+320, 340), 25)	
 		pygame.draw.circle(screen, (205, 50, 30), (sX/2-320, 340), 25)	
 
-		if p1.playerShape == 0:
+		if p1.playerShape == 'rect':
 			pygame.draw.rect(screen, (205, 50, 30), (sX/2 - 150, 565, 100, 100))
-		if p1.playerShape == 1:
+		if p1.playerShape == 'circ':
 			pygame.draw.circle(screen, (205, 50, 30), (sX/2 -100, 615), 50)	
-		if p1.playerShape == 2:
+		if p1.playerShape == 'tri':
 			pygame.draw.polygon(screen, (205, 50, 30), [[sX/2-100, 565], [sX/2 - 150, 665], [sX/2-50, 665]])
 
-		if p2.playerShape == 0:
+		if p2.playerShape == 'rect':
 			pygame.draw.rect(screen, (30, 190, 50), (sX/2 + 50, 565, 100, 100))
-		if p2.playerShape == 1:
+		if p2.playerShape == 'circ':
 			pygame.draw.circle(screen, (30, 190, 50), (sX/2 + 100, 615), 50)	
-		if p2.playerShape == 2:
+		if p2.playerShape == 'tri':
 			pygame.draw.polygon(screen, (30, 190, 50), [[sX/2 + 100, 565], [sX/2 + 150, 665], [sX/2 + 50, 665]])
 
 		font = pygame.font.Font(None, 100)
@@ -235,7 +237,7 @@ while running:
 		pygame.Rect(200, sY-300, sX-400, 50)
 	]
 
-	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
 		clock.tick(60)
@@ -254,6 +256,12 @@ while running:
 					p2.jumpUp = Fakse
 				if event.key == pygame.K_v:
 					qup = True
+					if p1.LattackUp == 'tri':
+						attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
+						p1.triAttacking = False
+					elif p1.LattackUp == 'circ':
+						pass
+					#make it so you cant turn around when you release 
 				if event.key == pygame.K_a:
 					p1.vx = 0
 					p1.still = True
@@ -344,27 +352,19 @@ while running:
 				p1.direction = player.Player.RIGHT
 			p1.moving = True
 		if keys[pygame.K_b] and eup == True and p1.allAttackCD == 0:
-			if p1.playerShape == player.Player.CIRCLE and p1.burstCD == 0:
-				p1.allAttackCD = 90
-				p1.burstCD = 180
-			elif p1.cut == False and p1.uppercutCD == 0:
-				eup = False
-				p1.cut = True
-				p1.allAttackCD = 30
-				p1.uppercutCD = 60				
+			eup = False
+			if p1.Sattack() == 'tri':
 				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
+				p1.vy -= 10
 
-		if keys[pygame.K_v] and qup == True and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
-			if p1.playerShape == player.Player.CIRCLE:
+		if keys[pygame.K_v] and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
+			qup = False
+			if p1.LattackDown() == 'tri':
+				attacklist.append(attacks.triLightAttack(p1, p1.x, p1.y))
+				p1.triAttacking = True
+			if p1.LattackDown() == 'circ':
 				attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
-				p1.lightAttackCD = 30
-				qup = False
-				p1.allAttackCD = 30			
-			else:
-				attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
-				p1.lightAttackCD = 25
-				qup = False
-				p1.allAttackCD = 26
+
 
 			
 		p1.y += p1.vy
@@ -414,7 +414,7 @@ while running:
 			p2.lightAttackCD = 30
 			p2.allAttackCD = 30
 		if keys[pygame.K_KP1] and oneup == True and p2.cut == False and p2.allAttackCD == 0:
-			if p2.playerShape == player.Player.CIRCLE and p2.burstCD == 0:
+			if p2.playerShape == 'circ' and p2.burstCD == 0:
 				p2.allAttackCD = 90
 				p2.burstCD = 180
 			elif p2.cut == False and p2.uppercutCD == 0:
@@ -516,15 +516,15 @@ while running:
 			screen.blit(text, (520,sY-160))
 
 			#drawing players here - - - - - - - - - -
-		if p1.playerShape == player.Player.TRI:
+		if p1.playerShape == 'tri':
 
-			if p1.lightAttackCD > 1:
+			if p1.triAttacking == True:
 				p1tri = pygame.image.load('p1 tri Lattack.png')
 
 				if p1.direction == player.Player.LEFT:
 					p1.RowNum = 1
 					p1.ticker+=1
-					if p1.ticker%20==0: 
+					if p1.ticker%5==0: 
 						p1.frameNum+=1
 					if p1.frameNum>1: 
 						p1.frameNum = 0
@@ -532,7 +532,7 @@ while running:
 				if p1.direction == player.Player.RIGHT:
 					p1.RowNum = 0
 					p1.ticker+=1
-					if p1.ticker%20==0: 
+					if p1.ticker%5==0: 
 						p1.frameNum+=1
 					if p1.frameNum>1: 
 						p1.frameNum = 0	
@@ -588,7 +588,7 @@ while running:
 
 			screen.blit(p1tri, (p1.x-15, p1.y - 30), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
 
-		if p2.playerShape == player.Player.TRI:
+		if p2.playerShape == 'tri':
 
 			if p2.lightAttackCD > 1:
 				p2tri = pygame.image.load('p2 tri Lattack.png')
@@ -650,12 +650,12 @@ while running:
 
 			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
-		if p1.playerShape == player.Player.CIRCLE:
+		if p1.playerShape == 'circ':
 			if p1.burstCD > 130:
 				p1.frameHeight = 200
 				p1.frameWidth = 200
 				p1.blitpos = (p1.x-100,p1.y-100)
-
+				
 				p1circ = pygame.image.load('p1 circ Battack.png')
 				p1.RowNum = 0
 				p1.ticker+=1
@@ -664,7 +664,7 @@ while running:
 				if p1.frameNum>5: 
 					p1.frameNum = 5
 
-			if p1.lightAttackCD > 0:
+			elif p1.lightAttackCD > 0:
 				p1.frameHeight = 49
 				p1.frameWidth = 150
 				p1.blitpos = (p1.x-75,p1.y-25)

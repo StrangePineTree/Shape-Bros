@@ -53,6 +53,14 @@ class lightAttack(attack):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -45), self.owner.y - 20)
 
+class triLightAttack(attack):
+	def __init__(self, owner: player.Player, x, y):
+		super().__init__(owner, 0.1, .01, 5, 0, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
+
+#	def update(self, players):
+#		super().update(players)
+#		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -45), self.owner.y - 20)
+
 class circLightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
 		super().__init__(owner, .25, .05, 20, 15, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
@@ -63,15 +71,13 @@ class circLightAttack(attack):
 		if self.owner.hit == False:
 			self.owner.vx /= 3
 
-
+#special attacks ------------------------------------------------------
 class upperCut(attack):
 	def __init__(self, owner: player.Player, x, y):
 		super().__init__(owner, 0.2, (.25 * (-((owner.vy/20) - 10)if owner.vy <0 else 1)), 1, (75 * (-((owner.vy/40) - 10)if owner.vy <0 else 1)), pygame.Rect(x, y - 65, 25, 80), False)
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x-2, self.owner.y - 65)
-		if self.owner.hit == False:
-			self.owner.vx /= 2
 
 class burst(attack):
 	burtattack = True

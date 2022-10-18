@@ -30,7 +30,7 @@ class Player:
 	uppercutCD = 0
 	burstCD = 0
 	color: tuple[int, int, int] = (0, 0, 0)
-	playerShape: int = -1
+	playerShape: str = ''
 	#sprite stuff:
 	frameWidth = 50
 	frameHeight = 50
@@ -41,6 +41,7 @@ class Player:
 	still = True
 	falling = False
 	moving = False
+	triAttacking = False
 	blitpos = (-100,-100)
 
 
@@ -76,17 +77,17 @@ class Player:
 		self.displayDamage = 0
 
 	def draw(self, surface):
-		if self.playerShape == Player.RECT:
+		if self.playerShape == 'rect':
 			pygame.draw.rect(surface, self.color, pygame.Rect(self.x, self.y, 20, 20))
-		elif self.playerShape == Player.CIRCLE:
+		elif self.playerShape == 'circ':
 			pygame.draw.circle(surface, self.color, (self.x + 10, self.y+8), 12)
 
 	def drawstock(self, surface, x, y):
-		if self.playerShape == Player.RECT:
+		if self.playerShape == 'rect':
 			pygame.draw.rect(surface, self.color, pygame.Rect(x-10, y-10, 20, 20))
-		elif self.playerShape == Player.CIRCLE:
+		elif self.playerShape == 'circ':
 			pygame.draw.circle(surface, self.color, (x, y), 10)		
-		elif self.playerShape == Player.TRI:		
+		elif self.playerShape == 'tri':		
 			pygame.draw.polygon(surface, self.color, [[x-10, y+10], [x, y-10], [x+10, y+10]])
 
 	def fall(self):
@@ -96,6 +97,50 @@ class Player:
 		if self.ground == True:
 			self.falling = False
 		
+	#attacks for players -----------------------------------------------------------------------------------------------------
+
+	def LattackDown(self):
+		if self.playerShape == 'rect':
+			return 'rect'
+		if self.playerShape == 'tri':
+			if self.allAttackCD == 0 and self.lightAttackCD == 0:
+				return 'tri'
+		if self.playerShape == 'circ':
+			if self.allAttackCD == 0 and self.lightAttackCD == 0:
+				return 'circ'	
+	def LattackUp(self):
+		if self.playerShape == 'rect':
+			pass
+		if self.playerShape == 'tri':
+			p1.lightAttackCD = 30
+			p1.allAttackCD = 30	
+			return "tri"
+		if self.playerShape == 'circ':
+			p1.lightAttackCD = 30
+			p1.allAttackCD = 30	
+	def Hattack(self):
+		if self.playerShape == 'rect':
+			pass
+		if self.playerShape == 'tri':
+			pass
+		if self.playerShape == 'circ':
+			pass
+
+	def Sattack(self):
+		print(p1.playerShape)
+		if self.playerShape == 'rect':
+			pass
+		if self.playerShape == 'tri':
+			if self.cut == False:
+				self.cut = True
+				self.allAttackCD = 30
+				return 'tri'
+		if self.playerShape == 'circ':
+			if self.burstCD == 0:
+				self.allAttackCD = 90
+				self.burstCD = 180
+			
+
 
 		
 
