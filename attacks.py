@@ -1,7 +1,7 @@
 import player
 import pygame
 import math
-burtattack = True
+burtattack = False
 burstRad = 40
 
 class attack:
@@ -32,6 +32,7 @@ class attack:
 					self.kbx = 0
 					self.hasHit = True
 					hitplayer.hit = True
+					
 				if self.hasHit == False and (math.sqrt((self.owner.x - hitplayer.x)**2 + (self.owner.y - hitplayer.y)**2)) <= burstRad and burtattack == True:
 					hitplayer.bumped = False
 					hitplayer.damage += self.damage
@@ -43,8 +44,6 @@ class attack:
 					self.hasHit = True
 					hitplayer.hit = True
 				
-
-				
 class lightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
 		super().__init__(owner, 0.15, .1, 60, 30, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
@@ -52,24 +51,30 @@ class lightAttack(attack):
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -45), self.owner.y - 20)
+		global burtattack
+		burtattack = False
 
 class triLightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.1, .01, 5, 0, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
+		super().__init__(owner, 0.02, .01, 5, 0, pygame.Rect(x + (15 if owner.direction == player.Player.RIGHT else -25), y-20, 20, 30), False)
 
-#	def update(self, players):
-#		super().update(players)
-#		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -45), self.owner.y - 20)
+	def update(self, players):
+		super().update(players)
+		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -25), self.owner.y - 20)
+		global burtattack
+		burtattack = False
 
 class circLightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, .25, .05, 20, 15, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
+		super().__init__(owner, .1, .05, 20, 15, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
 
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x + (15 if self.owner.direction == player.Player.RIGHT else -75), self.owner.y - 20)
 		if self.owner.hit == False:
 			self.owner.vx /= 3
+		global burtattack
+		burtattack = False
 
 #special attacks ------------------------------------------------------
 class upperCut(attack):
@@ -78,6 +83,8 @@ class upperCut(attack):
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x-2, self.owner.y - 65)
+		global burtattack
+		burtattack = False
 
 class burst(attack):
 	burtattack = True
@@ -91,8 +98,8 @@ class burst(attack):
 		global burstRad
 		if burstRad < 101:
 			burstRad +=5
-
-
+		global burtattack
+		burtattack = True
 
 #bfg not implemented atm
 class BFG(attack):
@@ -101,4 +108,5 @@ class BFG(attack):
 
 	def update(self, players):
 		super().update(players)
-
+		global burtattack
+		burtattack = False

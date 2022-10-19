@@ -12,6 +12,9 @@ pygame.display.set_caption("Super Shape Bros")
 clock = pygame.time.Clock()
 
 
+#TODO: fix circle light attack so lifespan is as long as key is held down
+
+
 gameOn = False
 menu = True
 select = False
@@ -127,15 +130,15 @@ while running:
 
 	startbutton = button((((sX/2) - 150), 700), (300, 150), (100,100,100))
 
-	p1square = button((sX/2-150, 290), (100, 100), (150,150,150))
-	p1circle = button((sX/2-260, 290), (100, 100), (150,150,150))
-	p1triangle = button((sX/2-370, 290), (100, 100), (150,150,150))
+	p1square = button((sX/2-260, 290), (100, 100), (150,150,150))
+	p1circle = button((sX/2-370, 290), (100, 100), (150,150,150))
+	p1triangle = button((sX/2-150, 290), (100, 100), (150,150,150))
 	p1hexagon = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	p1diamond = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 
-	p2square = button((sX/2 + 50, 290), (100, 100), (150,150,150)) 
-	p2circle = button((sX/2+160, 290), (100, 100), (150,150,150))
-	p2triangle = button((sX/2 + 270, 290), (100, 100), (150,150,150))
+	p2square = button((sX/2 + 160, 290), (100, 100), (150,150,150)) 
+	p2circle = button((sX/2+270, 290), (100, 100), (150,150,150))
+	p2triangle = button((sX/2 + 50, 290), (100, 100), (150,150,150))
 	p2hexagon = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	p2diamond = button((0, 0), (0, 0), (0,0,0)) #not implimented (DLC coming soon)
 	
@@ -147,10 +150,21 @@ while running:
 	buttonlist.append(p2square)
 	buttonlist.append(p2circle)
 	buttonlist.append(p2triangle)
-	#actually randomize the shape here
-	randshape = 'circ'
+	randshape = ''
+	rand = random.randint(0,2)
+	if rand == 0:
+		randshape = 'circ'
+	if rand == 1:
+		randshape = 'tri'	
+	if rand == 2:
+		randshape = 'rect'
 	p1.playerShape = randshape
-	randshape = 'tri'
+	if rand == 0:
+		randshape = 'circ'
+	if rand == 1:
+		randshape = 'tri'	
+	if rand == 2:
+		randshape = 'rect'
 	p2.playerShape = randshape
 
 	while select:
@@ -256,12 +270,12 @@ while running:
 					p2.jumpUp = Fakse
 				if event.key == pygame.K_v:
 					qup = True
-					if p1.LattackUp == 'tri':
+					if p1.LattackUp() == 'tri':
 						attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
 						p1.triAttacking = False
-					elif p1.LattackUp == 'circ':
-						pass
-					#make it so you cant turn around when you release 
+					elif p1.LattackUp() == 'circ':
+						p1.allAttackCD = 60
+					#TODO: make it so you cant turn around when you release 
 				if event.key == pygame.K_a:
 					p1.vx = 0
 					p1.still = True
@@ -320,7 +334,6 @@ while running:
 
 		#player 1 inputs/movment------------------------------------------------------------
 		
-		
 		keys = pygame.key.get_pressed()
 		#jump inputs
 		if keys[pygame.K_w] and p1.jumpUp == Fakse:
@@ -357,14 +370,14 @@ while running:
 				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
 				p1.vy -= 10
 
-		if keys[pygame.K_v] and p1.lightAttackCD == 0 and p1.allAttackCD == 0:
+		if keys[pygame.K_v] and p1.allAttackCD == 0:
 			qup = False
+			print(p1.LattackDown())
 			if p1.LattackDown() == 'tri':
 				attacklist.append(attacks.triLightAttack(p1, p1.x, p1.y))
 				p1.triAttacking = True
-			if p1.LattackDown() == 'circ':
+			elif p1.LattackDown() == 'circ':
 				attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
-
 
 			
 		p1.y += p1.vy
@@ -664,7 +677,7 @@ while running:
 				if p1.frameNum>5: 
 					p1.frameNum = 5
 
-			elif p1.lightAttackCD > 0:
+			elif p1.circAttacking == True:
 				p1.frameHeight = 49
 				p1.frameWidth = 150
 				p1.blitpos = (p1.x-75,p1.y-25)

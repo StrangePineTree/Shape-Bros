@@ -1,5 +1,7 @@
 Fakse = False
+import random
 import pygame
+
 
 class Player:
 	LEFT = 1
@@ -42,6 +44,7 @@ class Player:
 	falling = False
 	moving = False
 	triAttacking = False
+	circAttacking = False
 	blitpos = (-100,-100)
 
 
@@ -75,6 +78,7 @@ class Player:
 		self.vx = 0
 		self.damage = 0
 		self.displayDamage = 0
+		self.bumped = False
 
 	def draw(self, surface):
 		if self.playerShape == 'rect':
@@ -101,23 +105,28 @@ class Player:
 
 	def LattackDown(self):
 		if self.playerShape == 'rect':
-			return 'rect'
+			pass
 		if self.playerShape == 'tri':
-			if self.allAttackCD == 0 and self.lightAttackCD == 0:
-				return 'tri'
+			self.lightAttackCD = 5
+			return 'tri'
 		if self.playerShape == 'circ':
 			if self.allAttackCD == 0 and self.lightAttackCD == 0:
-				return 'circ'	
+				self.lightAttackCD = 20
+				self.circAttacking = True
+			return 'circ'
+				
 	def LattackUp(self):
 		if self.playerShape == 'rect':
 			pass
 		if self.playerShape == 'tri':
-			p1.lightAttackCD = 30
-			p1.allAttackCD = 30	
-			return "tri"
+			self.allAttackCD = 30	
+			self.lightAttackCD = 30
+			return 'tri'
 		if self.playerShape == 'circ':
-			p1.lightAttackCD = 30
-			p1.allAttackCD = 30	
+			self.lightAttackCD = 30
+			self.allAttackCD = 30	
+			self.circAttacking = False
+			return 'circ'
 	def Hattack(self):
 		if self.playerShape == 'rect':
 			pass
