@@ -270,11 +270,13 @@ while running:
 					p2.jumpUp = Fakse
 				if event.key == pygame.K_v:
 					qup = True
-					if p1.LattackUp() == 'tri':
-						attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
-						p1.triAttacking = False
-					elif p1.LattackUp() == 'circ':
-						p1.allAttackCD = 60
+					if p1.allAttackCD == 0:
+						if p1.LattackUp() == 'tri':
+							attacklist.append(attacks.lightAttack(p1, p1.x, p1.y))
+							p1.triAttacking = False
+						elif p1.LattackUp() == 'circ':
+							p1.allAttackCD = 60
+							p1.circAttacking = False
 					#TODO: make it so you cant turn around when you release 
 				if event.key == pygame.K_a:
 					p1.vx = 0
@@ -298,6 +300,13 @@ while running:
 					eup = True
 				if event.key == pygame.K_KP1:
 					oneup = True
+					if p2.allAttackCD == 0:
+						if p2.LattackUp() == 'tri':
+							attacklist.append(attacks.lightAttack(p2, p2.x, p2.y))
+							p2.triAttacking = False
+						elif p2.LattackUp() == 'circ':
+							p2.allAttackCD = 60
+							p2.circAttacking = False
 
 		#attack cooldowns for both players:
 		if p1.lightAttackCD != 0:
@@ -372,21 +381,22 @@ while running:
 
 		if keys[pygame.K_v] and p1.allAttackCD == 0:
 			qup = False
-			print(p1.LattackDown())
 			if p1.LattackDown() == 'tri':
-				attacklist.append(attacks.triLightAttack(p1, p1.x, p1.y))
-				p1.triAttacking = True
+				if p1.lightAttackCD == 0:
+					attacklist.append(attacks.triLightAttack(p1, p1.x, p1.y))
+					p1.lightAttackCD = 3
 			elif p1.LattackDown() == 'circ':
-				attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
+				if p1.lightAttackCD == 0:
+					p1.lightAttackCD = 24
+					attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
 
-			
 		p1.y += p1.vy
 		p1.x += p1.vx
 
 		p1.ground = Fakse
 
 		#death states
-		if p1.y >= sY-200:
+		if p1.y >= sY+200:
 			p1.death()
 		if p1.y < -100:
 			p1.death()
@@ -422,20 +432,20 @@ while running:
 				p2.direction = player.Player.RIGHT
 			p2.moving = True
 		if keys[pygame.K_KP2] and oup == True and p2.lightAttackCD == 0 and p2.allAttackCD == 0:
-			attacklist.append(attacks.lightAttack(p2, p2.x, p2.y))
 			oup = False
-			p2.lightAttackCD = 30
-			p2.allAttackCD = 30
+			if p2.Sattack() == 'tri':
+				attacklist.append(attacks.upperCut(p2,p2.x,p2.y))
+				p2.vy -= 10
 		if keys[pygame.K_KP1] and oneup == True and p2.cut == False and p2.allAttackCD == 0:
-			if p2.playerShape == 'circ' and p2.burstCD == 0:
-				p2.allAttackCD = 90
-				p2.burstCD = 180
-			elif p2.cut == False and p2.uppercutCD == 0:
-				eup = False
-				p2.cut = True
-				p2.allAttackCD = 30
-				p2.uppercutCD = 60				
-				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
+			eup = False
+			if p2.LattackDown() == 'tri':
+				if p2.lightAttackCD == 0:
+					attacklist.append(attacks.triLightAttack(p2, p2.x, p2.y))
+					p2.lightAttackCD = 3
+			elif p2.LattackDown() == 'circ':
+				if p2.lightAttackCD == 0:
+					p2.lightAttackCD = 24
+					attacklist.append(attacks.circLightAttack(p2, p2.x, p2.y))
 
 		p2.y += p2.vy
 
@@ -447,7 +457,6 @@ while running:
 			p2.death()
 		if p2.y  < -100:
 			p2.death()
-		#player 1 platforms
 		for p in players:
 			if pygame.Rect(p.x, p.y, 20, 20).collidelist(platformlist) != -1:
 				p.ground = True
@@ -529,6 +538,12 @@ while running:
 			screen.blit(text, (520,sY-160))
 
 			#drawing players here - - - - - - - - - -
+
+
+		#PLAYER ONE DRAWING
+		#----------------------------------------------------------------------------------------------------------------------
+		#----------------------------------------------------------------------------------------------------------------------
+		#----------------------------------------------------------------------------------------------------------------------
 		if p1.playerShape == 'tri':
 
 			if p1.triAttacking == True:
@@ -600,69 +615,7 @@ while running:
 						p1.frameNum = 0	
 
 			screen.blit(p1tri, (p1.x-15, p1.y - 30), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
-
-		if p2.playerShape == 'tri':
-
-			if p2.lightAttackCD > 1:
-				p2tri = pygame.image.load('p2 tri Lattack.png')
-
-
-				if p2.direction == player.Player.LEFT:
-					p2.RowNum = 1
-					p2.ticker+=1
-					if p2.ticker%20==0: 
-						p2.frameNum+=1
-					if p2.frameNum>1: 
-						p2.frameNum = 0
-				
-				if p2.direction == player.Player.RIGHT:
-					p2.RowNum = 0
-					p2.ticker+=1
-					if p2.ticker%20==0: 
-						p2.frameNum+=1
-					if p2.frameNum>1: 
-						p2.frameNum = 0	
-
-			elif p2.moving == True:
 	
-				p2tri = pygame.image.load('p2 tri run.png')
-
-				if p2.direction == player.Player.LEFT:
-					p2.RowNum = 1
-					p2.ticker+=1
-					if p2.ticker%20==0: 
-						p2.frameNum+=1
-					if p2.frameNum>2: 
-						p2.frameNum = 0
-				
-				if p2.direction == player.Player.RIGHT:
-					p2.RowNum = 0
-					p2.ticker+=1
-					if p2.ticker%20==0: 
-						p2.frameNum+=1
-					if p2.frameNum>2: 
-						p2.frameNum = 0	
-			else:
-				p2tri = pygame.image.load('p2 tri idle.png')
-
-				if p2.direction == player.Player.LEFT:
-					p2.RowNum = 1
-					p2.ticker+=1
-					if p2.ticker%20==0: 
-						p2.frameNum+=1
-					if p2.frameNum>1: 
-						p2.frameNum = 0
-				
-				if p2.direction == player.Player.RIGHT:
-					p2.RowNum = 0
-					p2.ticker+=1
-					if p2.ticker%20==0: 
-						p2.frameNum+=1
-					if p2.frameNum>1: 
-						p2.frameNum = 0	
-
-			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
-
 		if p1.playerShape == 'circ':
 			if p1.burstCD > 130:
 				p1.frameHeight = 200
@@ -713,6 +666,136 @@ while running:
 					p1.frameNum = 0
 
 		screen.blit(p1circ, (p1.blitpos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
+
+		
+			#PLAYER 2 DRAWING
+			#----------------------------------------------------------------------------------------------------------------------
+			#----------------------------------------------------------------------------------------------------------------------
+			#----------------------------------------------------------------------------------------------------------------------
+		if p2.playerShape == 'tri':
+
+			if p2.triAttacking == True:
+				p2tri = pygame.image.load('p2 tri Lattack.png')
+
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.ticker+=1
+					if p2.ticker%5==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.ticker+=1
+					if p2.ticker%5==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0	
+						
+			elif p2.uppercutCD > 35:
+				p2tri = pygame.image.load('p2 tri Uattack.png')
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.frameNum = 0
+
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.frameNum = 0
+
+			elif p2.moving == True:
+	
+				p2tri = pygame.image.load('p2 tri run.png')
+
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>2: 
+						p2.frameNum = 0
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>2: 
+						p2.frameNum = 0	
+
+			else:
+				p2tri = pygame.image.load('p2 tri idle.png')
+
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.ticker+=1
+					if p2.ticker%20==0: 
+						p2.frameNum+=1
+					if p2.frameNum>1: 
+						p2.frameNum = 0	
+
+			screen.blit(p2tri, (p2.x-15, p2.y - 30), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
+	
+		if p2.playerShape == 'circ':
+			if p2.burstCD > 130:
+				p2.frameHeight = 200
+				p2.frameWidth = 200
+				p2.blitpos = (p2.x-100,p2.y-100)
+				
+				p2circ = pygame.image.load('p2 circ Battack.png')
+				p2.RowNum = 0
+				p2.ticker+=1
+				if p2.ticker%6==0: 
+					p2.frameNum+=1
+				if p2.frameNum>5: 
+					p2.frameNum = 5
+
+			elif p2.circAttacking == True:
+				p2.frameHeight = 49
+				p2.frameWidth = 150
+				p2.blitpos = (p2.x-75,p2.y-25)
+				p2circ = pygame.image.load('p2 circ Lattack.png')
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 1
+					p2.ticker+=1
+					if p2.ticker%5==0: 
+						p2.frameNum+=1
+					if p2.frameNum>3: 
+						p2.frameNum = 0
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.ticker+=1
+					if p2.ticker%5==0: 
+						p2.frameNum+=1
+					if p2.frameNum>3: 
+						p2.frameNum = 0	
+
+			else:
+				p2circ = pygame.image.load('p2 circ idle.png')
+				p2.blitpos = (p2.x-25,p2.y-25)
+				p2.frameHeight = 49
+				p2.frameWidth = 100
+
+				if p2.direction == player.Player.LEFT:
+					p2.RowNum = 0
+					p2.frameNum = 2
+				
+				if p2.direction == player.Player.RIGHT:
+					p2.RowNum = 0
+					p2.frameNum = 0
+
+			screen.blit(p2circ, (p2.blitpos), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
+
+		
 		'''
 		for debugging:
 				pygame.draw.rect(screen, (100, 100, 100), (p1.x, p1.y, 10, 10))

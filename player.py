@@ -107,11 +107,10 @@ class Player:
 		if self.playerShape == 'rect':
 			pass
 		if self.playerShape == 'tri':
-			self.lightAttackCD = 5
+			self.triAttacking = True
 			return 'tri'
 		if self.playerShape == 'circ':
 			if self.allAttackCD == 0 and self.lightAttackCD == 0:
-				self.lightAttackCD = 20
 				self.circAttacking = True
 			return 'circ'
 				
@@ -127,6 +126,7 @@ class Player:
 			self.allAttackCD = 30	
 			self.circAttacking = False
 			return 'circ'
+
 	def Hattack(self):
 		if self.playerShape == 'rect':
 			pass

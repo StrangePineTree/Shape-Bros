@@ -66,7 +66,7 @@ class triLightAttack(attack):
 
 class circLightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, .1, .05, 20, 15, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
+		super().__init__(owner, .4, .15, 40, 25, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
 
 	def update(self, players):
 		super().update(players)
