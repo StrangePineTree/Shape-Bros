@@ -352,27 +352,9 @@ while running:
 			pass
 			#will add a mechanic to drop thru platoforms here
 		if keys[pygame.K_a] and p1.vx > -7:
-			if p1.hit == False:
-				p1.vx -= 7/4
-				p1.direction = player.Player.LEFT
-			if  p1.hit == True and p1.x < 100 or p1.x > 1800:
-				p1.vx -= 1
-				p1.direction = player.Player.LEFT
-			else:
-				p1.vx -= 7/100
-				p1.direction = player.Player.LEFT
-			p1.moving = True
+			p1.goLeft()
 		if keys[pygame.K_d] and p1.vx < 7:
-			if p1.hit == False:
-				p1.vx += 7/4
-				p1.direction = player.Player.RIGHT
-			if  p1.hit == True and p1.x < 100 or p1.x > 1800:
-				p1.vx += 1
-				p1.direction = player.Player.RIGHT
-			else:
-				p1.vx += 7/100
-				p1.direction = player.Player.RIGHT
-			p1.moving = True
+			p1.goRight()
 		if keys[pygame.K_b] and eup == True and p1.allAttackCD == 0:
 			eup = False
 			if p1.Sattack() == 'tri':
@@ -410,27 +392,9 @@ while running:
 		if keys[pygame.K_DOWN]:
 			pass
 		if keys[pygame.K_LEFT] and p2.vx > -7:
-			if p2.hit == False:
-				p2.vx -= 7/4
-				p2.direction = player.Player.LEFT
-			if  p2.hit == True and p2.x < 100 or p2.x > 1800:
-				p2.vx -= 1
-				p2.direction = player.Player.LEFT
-			else:
-				p2.vx -= 7/100
-				p2.direction = player.Player.LEFT
-			p2.moving = True
+			p2.goLeft()
 		if keys[pygame.K_RIGHT] and p2.vx < 7:
-			if p2.hit == False:
-				p2.vx += 7/4
-				p2.direction = player.Player.RIGHT
-			if  p2.hit == True and p2.x < 100 or p2.x > 1800:
-				p2.vx += 1
-				p2.direction = player.Player.RIGHT
-			else:
-				p2.vx += 7/100
-				p2.direction = player.Player.RIGHT
-			p2.moving = True
+			p2.goRight()
 		if keys[pygame.K_KP2] and oup == True and p2.lightAttackCD == 0 and p2.allAttackCD == 0:
 			oup = False
 			if p2.Sattack() == 'tri':
@@ -783,6 +747,7 @@ while running:
 				p2circ = pygame.image.load('p2 circ idle.png')
 				p2.blitpos = (p2.x-25,p2.y-25)
 				p2.frameHeight = 49
+
 				p2.frameWidth = 100
 
 				if p2.direction == player.Player.LEFT:

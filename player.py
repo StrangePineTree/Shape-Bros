@@ -69,6 +69,54 @@ class Player:
 			if self.hit == True:
 				self.vx + (5 if self.direction == 2 else -5)
 
+	def goLeft(self):
+		if self.playerShape == 'circ':
+			if self.hit == False:
+				self.vx += 7/4
+				self.direction = 1
+			if  self.hit == True and self.x < 100 or self.x > 1800:
+				self.vx -= 1
+				self.direction = 1
+			else:
+				self.vx -= 7/40
+				self.direction = 1
+			self.moving = True
+		else:
+			if self.hit == False:
+				self.vx -= 7/4
+				self.direction = 1
+			if  self.hit == True and self.x < 100 or self.x > 1800:
+				self.vx -= 1
+				self.direction = 1
+			else:
+				self.vx -= 7/40
+				self.direction = 1
+			self.moving = True
+
+	def goRight(self):
+		if self.playerShape == 'circ':
+			if self.hit == False:
+				self.vx += 7/4
+				self.direction = 2
+			if  self.hit == True and self.x < 100 or self.x > 1800:
+				self.vx += 1
+				self.direction = 2
+			else:
+				self.vx += 7/40
+				self.direction = 2
+			self.moving = True
+		else:
+			if self.hit == False:
+				self.vx += 7/4
+				self.direction = 2
+			if  self.hit == True and self.x < 100 or self.x > 1800:
+				self.vx += 1
+				self.direction = 2
+			else:
+				self.vx += 7/40
+				self.direction = 2
+			self.moving = True
+
 	def death(self):
 		print('player died')
 		self.lives -= 1
