@@ -351,10 +351,16 @@ while running:
 		if keys[pygame.K_s]:
 			pass
 			#will add a mechanic to drop thru platoforms here
-		if keys[pygame.K_a] and p1.vx > -7:
-			p1.goLeft()
-		if keys[pygame.K_d] and p1.vx < 7:
-			p1.goRight()
+		if keys[pygame.K_a]:
+			if p1.playerShape == 'circ' and p1.vx > -12:
+				p1.goLeft()
+			elif p1.playerShape == 'tri' and p1.vx > -7:
+				p1.goLeft()
+		if keys[pygame.K_d]:
+			if p1.playerShape == 'circ' and p1.vx < 12:
+				p1.goRight()
+			elif p1.playerShape == 'tri' and p1.vx < 7:
+				p1.goRight()
 		if keys[pygame.K_b] and eup == True and p1.allAttackCD == 0:
 			eup = False
 			if p1.Sattack() == 'tri':
@@ -391,10 +397,16 @@ while running:
 			p2.jump()
 		if keys[pygame.K_DOWN]:
 			pass
-		if keys[pygame.K_LEFT] and p2.vx > -7:
-			p2.goLeft()
-		if keys[pygame.K_RIGHT] and p2.vx < 7:
-			p2.goRight()
+		if keys[pygame.K_LEFT]:
+			if p2.playerShape == 'circ' and p2.vx > -12:
+				p2.goLeft()
+			elif p2.playerShape == 'tri' and p2.vx > -7:
+				p2.goLeft()
+		if keys[pygame.K_RIGHT]:
+			if p2.playerShape == 'circ' and p2.vx < 12:
+				p2.goRight()
+			elif p2.playerShape == 'tri' and p2.vx < 7:
+				p2.goRight()
 		if keys[pygame.K_KP2] and oup == True and p2.lightAttackCD == 0 and p2.allAttackCD == 0:
 			oup = False
 			if p2.Sattack() == 'tri':
@@ -421,6 +433,10 @@ while running:
 			p2.death()
 		if p2.y  < -100:
 			p2.death()
+		
+	#	for p in players:
+	#		if 
+
 		for p in players:
 			if pygame.Rect(p.x, p.y, 20, 20).collidelist(platformlist) != -1:
 				p.ground = True
@@ -428,10 +444,13 @@ while running:
 				p.vy = 0
 				p.vx /= 1.1
 				if p.bumped == False:
-					p.y = sY - 320
-					p.bumped = True
+					if p.y < sY - 280:
+						p.y = sY - 320
+						p.bumped = True
 				p.cut = Fakse
 				p.hit = False
+			if pygame.Rect(p.x, p.y, 20, 20).colliderect(pygame.Rect(200, sY-280, sX-400, 250)):
+				p.vy += 2
 
 		for a in attacklist:
 			a.update(players)

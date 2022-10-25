@@ -72,7 +72,7 @@ class Player:
 	def goLeft(self):
 		if self.playerShape == 'circ':
 			if self.hit == False:
-				self.vx += 7/4
+				self.vx -= 7/10
 				self.direction = 1
 			if  self.hit == True and self.x < 100 or self.x > 1800:
 				self.vx -= 1
@@ -96,7 +96,7 @@ class Player:
 	def goRight(self):
 		if self.playerShape == 'circ':
 			if self.hit == False:
-				self.vx += 7/4
+				self.vx += 7/10
 				self.direction = 2
 			if  self.hit == True and self.x < 100 or self.x > 1800:
 				self.vx += 1
