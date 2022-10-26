@@ -7,6 +7,8 @@ class Player:
 	LEFT = 1
 	RIGHT = 2
 
+	attackDown = False
+
 	RECT = 0
 	CIRCLE = 1
 	TRI = 2
@@ -53,21 +55,38 @@ class Player:
 	def jump(self):
 		self.jumpUp = True
 		self.bumped = False
-		if(self.ground == True and self.jumps == 0):
-			self.vy=-20
-			self.jumps += 1
-			if self.hit == True:
-				self.vx + (5 if self.direction == 2 else -5)
-		if (self.ground == Fakse and self.jumps >=1 and self.jumps <= 3):
-			self.vy = -12
-			self.jumps+=1
-			if self.hit == True:
-				self.vx + (5 if self.direction == 2 else -5)
-		if (self.ground == False and self.jumps == 0):
-			self.vy = -12
-			self.jumps += 2
-			if self.hit == True:
-				self.vx + (5 if self.direction == 2 else -5)
+		if self.playerShape == 'tri':
+			if(self.ground == True and self.jumps == 0):
+				self.vy=-20
+				self.jumps += 1
+				if self.hit == True:
+					self.vx + (10 if self.direction == 2 else -5)
+			if (self.ground == Fakse and self.jumps >=1 and self.jumps <= 5):
+				self.vy = -12
+				self.jumps+=1
+				if self.hit == True:
+					self.vx + (10 if self.direction == 2 else -5)
+			if (self.ground == False and self.jumps == 0):
+				self.vy = -12
+				self.jumps += 2
+				if self.hit == True:
+					self.vx + (10 if self.direction == 2 else -5)
+		else:
+			if(self.ground == True and self.jumps == 0):
+				self.vy=-20
+				self.jumps += 1
+				if self.hit == True:
+					self.vx + (5 if self.direction == 2 else -5)
+			if (self.ground == Fakse and self.jumps >=1 and self.jumps <= 3):
+				self.vy = -12
+				self.jumps+=1
+				if self.hit == True:
+					self.vx + (5 if self.direction == 2 else -5)
+			if (self.ground == False and self.jumps == 0):
+				self.vy = -12
+				self.jumps += 2
+				if self.hit == True:
+					self.vx + (5 if self.direction == 2 else -5)
 
 	def goLeft(self):
 		if self.playerShape == 'circ':
@@ -78,7 +97,7 @@ class Player:
 				self.vx -= 1
 				self.direction = 1
 			else:
-				self.vx -= 7/40
+				self.vx -= 7/20
 				self.direction = 1
 			self.moving = True
 		else:
@@ -89,7 +108,7 @@ class Player:
 				self.vx -= 1
 				self.direction = 1
 			else:
-				self.vx -= 7/40
+				self.vx -= 7/12
 				self.direction = 1
 			self.moving = True
 
@@ -102,7 +121,7 @@ class Player:
 				self.vx += 1
 				self.direction = 2
 			else:
-				self.vx += 7/40
+				self.vx += 7/20
 				self.direction = 2
 			self.moving = True
 		else:
@@ -113,7 +132,7 @@ class Player:
 				self.vx += 1
 				self.direction = 2
 			else:
-				self.vx += 7/40
+				self.vx += 7/12
 				self.direction = 2
 			self.moving = True
 
@@ -155,7 +174,8 @@ class Player:
 		if self.playerShape == 'rect':
 			pass
 		if self.playerShape == 'tri':
-			self.triAttacking = True
+			if self.attackDown == False:
+				self.triAttacking = True
 			return 'tri'
 		if self.playerShape == 'circ':
 			if self.allAttackCD == 0 and self.lightAttackCD == 0:

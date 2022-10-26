@@ -43,7 +43,7 @@ class attack:
 					self.kbx = 0
 					self.hasHit = True
 					hitplayer.hit = True
-				
+#TRI ATTACKS - - - - - - - - - - - - - - - - -
 class lightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
 		super().__init__(owner, 0.15, .1, 60, 30, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
@@ -64,6 +64,16 @@ class triLightAttack(attack):
 		global burtattack
 		burtattack = False
 
+class triDownAttack(attack):
+	def __init__(self, owner: player.Player, x, y):
+		super().__init__(owner, 0.4, .4, 60, 30, pygame.Rect(x-5, y-15, 30, 60), False)
+
+	def update(self, players):
+		super().update(players)
+		self.hitbox.topleft = (self.owner.x-5, self.owner.y - 10)
+		global burtattack
+		burtattack = False
+
 class circLightAttack(attack):
 	def __init__(self, owner: player.Player, x, y):
 		super().__init__(owner, .4, .15, 40, 25, pygame.Rect(x + (25 if owner.direction == player.Player.RIGHT else -35), y-35, 60, 30), False)
@@ -79,7 +89,7 @@ class circLightAttack(attack):
 #special attacks ------------------------------------------------------
 class upperCut(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.2, (.25 * (-((owner.vy/20) - 10)if owner.vy <0 else 1)), 1, (75 * (-((owner.vy/40) - 10)if owner.vy <0 else 1)), pygame.Rect(x, y - 65, 25, 80), False)
+		super().__init__(owner, 0.2, .25, 1, (75 * (-((owner.vy/40) - 10)if owner.vy <0 else 1)), pygame.Rect(x, y - 65, 25, 80), False)
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x-2, self.owner.y - 65)
@@ -89,7 +99,7 @@ class upperCut(attack):
 class burst(attack):
 	burtattack = True
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 1, .30 , 40, 80 , pygame.Rect(x, y, 400, 400), False)
+		super().__init__(owner, 1, .30 , 40, 40 , pygame.Rect(x, y, 400, 400), False)
 		global burstRad
 		burstRad = 40
 	def update(self, players):

@@ -1,6 +1,7 @@
 aaaa = False
 TREW = True
 Fakse = False
+from re import M
 import player
 import attacks
 import pygame
@@ -13,8 +14,9 @@ clock = pygame.time.Clock()
 
 
 #TODO: fix circle light attack so lifespan is as long as key is held down
+showBoxes = False
 
-
+dropDown = False
 gameOn = False
 menu = True
 select = False
@@ -68,12 +70,23 @@ class button:
 running = True
 while running:
 	buttonlist: list[button] = []
+	maplist: list[button] = []
 
 	startbutton = button((sX/2 -150, 400), (300, 150), (100,100,100))
 	quitbutton = button((sX/2 -150, 575), (300, 150), (100,100,100))
 	stockupbutton = button((sX/2- 200, 410), (50, 50), (48, 52, 70))
 	stockdownbutton = button((sX/2-200, 480), (50, 50), (48, 52, 70))
 	mapbutton = button((sX/2+160, 400), (150, 150), (100,100,100))
+
+	mapdropdown = button((sX/2+160, 400), (150, 440), (140,140,140))
+	map1 = button((sX/2+165, 405), (140, 140), (110,110,110))
+	map2 = button((sX/2+165, 550), (140, 140), (110,110,110))
+	map3 = button((sX/2+165, 695), (140, 140), (110,110,110))
+
+	maplist.append(mapdropdown)
+	maplist.append(map1)
+	maplist.append(map2)
+	maplist.append(map3)
 
 	buttonlist.append(startbutton)
 	buttonlist.append(quitbutton)
@@ -103,13 +116,26 @@ while running:
 							stocks-=1
 							if stocks == 0:
 								stocks = -1
-						if b is mapbutton:
-							pass
+			
+		dropDown = False
+		for b in buttonlist:
+			if b.box.collidepoint(pygame.mouse.get_pos()):
+				if b is mapbutton:
+					dropDown = True
+		for b in maplist:
+			if b.box.collidepoint(pygame.mouse.get_pos()):
+				if b is mapdropdown:
+					dropDown = True
+
 
 		screen.fill((48, 52, 70))
 
 		for b in buttonlist:
 			b.draw()
+
+		if dropDown == True:
+			for b in maplist:
+				b.draw()
 
 		font = pygame.font.Font(None, 100)
 		text = font.render(str('QUIT'), True, (150, 255, 255))
@@ -266,6 +292,8 @@ while running:
 				#checks of keys were released
 				if event.key == pygame.K_w:
 					p1.jumpUp = Fakse
+				if event.key == pygame.K_s:
+					p1.attackDown = False
 				if event.key == pygame.K_UP:
 					p2.jumpUp = Fakse
 				if event.key == pygame.K_v:
@@ -349,7 +377,7 @@ while running:
 			p1.jump()
 		#left right and duck inputs
 		if keys[pygame.K_s]:
-			pass
+			p1.attackDown = True
 			#will add a mechanic to drop thru platoforms here
 		if keys[pygame.K_a]:
 			if p1.playerShape == 'circ' and p1.vx > -12:
@@ -366,17 +394,27 @@ while running:
 			if p1.Sattack() == 'tri':
 				attacklist.append(attacks.upperCut(p1,p1.x,p1.y))
 				p1.vy -= 10
-
 		if keys[pygame.K_v] and p1.allAttackCD == 0:
 			qup = False
-			if p1.LattackDown() == 'tri':
-				if p1.lightAttackCD == 0:
-					attacklist.append(attacks.triLightAttack(p1, p1.x, p1.y))
-					p1.lightAttackCD = 3
-			elif p1.LattackDown() == 'circ':
-				if p1.lightAttackCD == 0:
-					p1.lightAttackCD = 24
-					attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
+			if p1.attackDown == False:
+				if p1.LattackDown() == 'tri':
+					if p1.lightAttackCD == 0:
+						attacklist.append(attacks.triLightAttack(p1, p1.x, p1.y))
+						p1.lightAttackCD = 3
+				elif p1.LattackDown() == 'circ':
+					if p1.lightAttackCD == 0:
+						p1.lightAttackCD = 24
+						attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
+			elif p1.attackDown == True:
+				if p1.LattackDown() == 'tri':
+					if p1.lightAttackCD == 0 and p1.allAttackCD == 0:
+						attacklist.append(attacks.triDownAttack(p1, p1.x, p1.y))
+						p1.lightAttackCD = 40
+						p1.allAttackCD = 40
+				elif p1.LattackDown() == 'circ':
+					if p1.lightAttackCD == 0:
+						p1.lightAttackCD = 24
+						attacklist.append(attacks.circLightAttack(p1, p1.x, p1.y))
 
 		p1.y += p1.vy
 		p1.x += p1.vx
@@ -473,15 +511,16 @@ while running:
 		#render - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		screen.fill((50,50,75))
-		pygame.draw.rect(screen, (100, 100, 100), (200, sY-300, sX-400, 20))#main platform
-		#attack boxes - - - - - 
-		attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
-		attacksurface.set_alpha(100)
-		for a in attacklist:
-			if a != type(a) != attacks.burst:
-				pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
+		if showBoxes == True:
+			pygame.draw.rect(screen, (100, 100, 100), (200, sY-300, sX-400, 20))#main platform
+			#attack boxes - - - - - 
+			attacksurface = pygame.Surface((screen.get_width(), screen.get_height()))
+			attacksurface.set_alpha(100)
+			for a in attacklist:
+				if a != type(a) != attacks.burst:
+					pygame.draw.rect(screen, (50, 50, 200), a.hitbox, 5)
 
-		screen.blit(attacksurface, (0, 0))
+			screen.blit(attacksurface, (0, 0))
 		#attack boxes - - - - - -
 		for p in players:
 			p.draw(screen)
