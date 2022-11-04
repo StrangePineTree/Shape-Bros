@@ -31,7 +31,7 @@ p2tri = pygame.image.load('p2 tri idle.png')
 p1circ = pygame.image.load('p1 circ idle.png')
 
 
-
+mapType = "floating"
 stocks = 3
 
 attacklist: list[attacks.attack] = []
@@ -69,8 +69,12 @@ class button:
 # main loop:
 running = True
 while running:
+	mapchoice = "alley"
 	buttonlist: list[button] = []
 	maplist: list[button] = []
+
+	mapbuttonpos = [405,550,695]
+	a = [1, 2, 3]
 
 	startbutton = button((sX/2 -150, 400), (300, 150), (100,100,100))
 	quitbutton = button((sX/2 -150, 575), (300, 150), (100,100,100))
@@ -79,9 +83,10 @@ while running:
 	mapbutton = button((sX/2+160, 400), (150, 150), (100,100,100))
 
 	mapdropdown = button((sX/2+160, 400), (150, 440), (140,140,140))
-	map1 = button((sX/2+165, 405), (140, 140), (110,110,110))
-	map2 = button((sX/2+165, 550), (140, 140), (110,110,110))
-	map3 = button((sX/2+165, 695), (140, 140), (110,110,110))
+
+	map1 = button((sX/2+165, mapbuttonpos[0]), (140, 140), (110,110,110))
+	map2 = button((sX/2+165, mapbuttonpos[1]), (140, 140), (110,110,110))
+	map3 = button((sX/2+165, mapbuttonpos[2]), (140, 140), (110,110,110))
 
 	maplist.append(mapdropdown)
 	maplist.append(map1)
@@ -95,6 +100,9 @@ while running:
 	buttonlist.append(mapbutton)
 	while menu == TREW:
 
+		map1 = button((sX/2+165, mapbuttonpos[0]), (140, 140), (110,110,110))
+		map2 = button((sX/2+165, mapbuttonpos[1]), (140, 140), (110,110,110))
+		map3 = button((sX/2+165, mapbuttonpos[2]), (140, 140), (110,110,110))
 		for e in pygame.event.get():
 			if e.type == pygame.QUIT:
 				aaaa = True
@@ -116,6 +124,23 @@ while running:
 							stocks-=1
 							if stocks == 0:
 								stocks = -1
+				for b in maplist:
+					if b.box.collidepoint(pygame.mouse.get_pos()):
+						if b is map1:
+							maptype = 'flat'
+							mapchoice = 'alley'
+							mapbuttonpos = [mapbuttonpos[1], mapbuttonpos[0], mapbuttonpos[2]]
+
+						if b is map2:
+							maptype = 'floating'
+							mapchoice = 'rooftops'	
+							mapbuttonpos = [mapbuttonpos[1], mapbuttonpos[0], mapbuttonpos[2]]
+	
+						if b is map3:
+							maptype = 'floating'
+							mapchoice = '?????'		
+							mapbuttonpos = [mapbuttonpos[1], mapbuttonpos[0], mapbuttonpos[2]]
+		
 			
 		dropDown = False
 		for b in buttonlist:
@@ -136,6 +161,16 @@ while running:
 		if dropDown == True:
 			for b in maplist:
 				b.draw()
+			text = font.render(str("alley"), True, (150, 255, 255))
+			screen.blit(text, (sX/2+165, mapbuttonpos[0]))
+			text = font.render(str("rooftops"), True, (150, 255, 255))
+			screen.blit(text, (sX/2+165, mapbuttonpos[1]))
+			text = font.render(str("??????"), True, (150, 255, 255))
+			screen.blit(text, (sX/2+165, mapbuttonpos[2]))
+		if dropDown == False:
+			font = pygame.font.Font(None, 40)
+			text = font.render(str(mapchoice), True, (150, 255, 255))
+			screen.blit(text, (sX/2+165,405))
 
 		font = pygame.font.Font(None, 100)
 		text = font.render(str('QUIT'), True, (150, 255, 255))
@@ -185,6 +220,7 @@ while running:
 	if rand == 2:
 		randshape = 'rect'
 	p1.playerShape = randshape
+	rand = random.randint(0,2)
 	if rand == 0:
 		randshape = 'circ'
 	if rand == 1:
@@ -426,7 +462,11 @@ while running:
 			p1.death()
 		if p1.y < -100:
 			p1.death()
-
+		if mapType != "floating":
+			if p1.x >= sX + 300 or p1.x <= -300:
+				p1.death()
+			if p2.x >= sX + 300 or p2.x <= -300:
+				p2.death()
 
 		#player 2 inputs and movement - - - - - -
 		keys = pygame.key.get_pressed()
