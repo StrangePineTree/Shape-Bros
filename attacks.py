@@ -89,7 +89,7 @@ class circLightAttack(attack):
 #special attacks ------------------------------------------------------
 class upperCut(attack):
 	def __init__(self, owner: player.Player, x, y):
-		super().__init__(owner, 0.2, .25, 1, (75 * (-((owner.vy/40) - 10)if owner.vy <0 else 1)), pygame.Rect(x, y - 65, 25, 80), False)
+		super().__init__(owner, 0.2, .25, 1, 75 * (1.25 if owner.vy <-10 else 1), pygame.Rect(x, y - 65, 25, 80), False)
 	def update(self, players):
 		super().update(players)
 		self.hitbox.topleft = (self.owner.x-2, self.owner.y - 65)

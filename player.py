@@ -3,17 +3,11 @@ import random
 import pygame
 
 
-class Player:
+class Player:#whole lot of variables
 	LEFT = 1
 	RIGHT = 2
 
 	attackDown = False
-
-	RECT = 0
-	CIRCLE = 1
-	TRI = 2
-	HEXAGON = 3
-	DIAMOND = 4
 
 	x: float | int = 0
 	y: float | int = 0
@@ -27,29 +21,27 @@ class Player:
 	bumped = Fakse
 	lives = 3
 	cut = False #has player used uppercut
-	displayDamage = 0
+	displayDamage = 0#display damage and actual damage r different stuff cuz im bad at coding and real damage is a number like 0.12 instead of 120% or sum crazy shit
 	hit = False
-	lightAttackCD = 0
+	lightAttackCD = 0#attack cooldowns
 	allAttackCD = 0
 	uppercutCD = 0
 	burstCD = 0
-	color: tuple[int, int, int] = (0, 0, 0)
+	color: tuple[int, int, int] = (0, 0, 0)#outdated, will be removed once all sprites are added
 	playerShape: str = ''
+
 	#sprite stuff:
 	frameWidth = 50
 	frameHeight = 50
 	RowNum = 0 
 	frameNum = 0
 	ticker = 0
-
 	still = True
 	falling = False
 	moving = False
 	triAttacking = False
 	circAttacking = False
 	blitpos = (-100,-100)
-
-
 
 
 	def jump(self):
@@ -137,7 +129,6 @@ class Player:
 			self.moving = True
 
 	def death(self):
-		print('player died')
 		self.lives -= 1
 		self.x = 950
 		self.y = 500
