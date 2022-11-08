@@ -1,6 +1,7 @@
 #TODO: make a platform class with better collision (cant run thru platforms, no janky teliport. (will be nessicary for rooftop map))
 #add square charectar
 #add a few more settings and maybe alternate control schemes(either read from a text file or if/else statements and a setting)
+#make everything scale with moniter size
 
 #imports and pygame stuff
 aaaa = False
@@ -133,9 +134,7 @@ while running:
 							map1.color = (110,110,110)
 							map2.color = (110,110,110)
 							map3.color = (80,80,80)
-
-		
-			
+	
 		dropDown = False#sets dropdown to false unless these next lines make it true
 		for b in buttonlist:
 			if b.box.collidepoint(pygame.mouse.get_pos()):#if the map button is hovered over the map menu drops down
@@ -310,12 +309,15 @@ while running:
 	p2.damage = 0
 	p1.x = 400
 	p1.y = 500
+	p1.vx = 0
+	p1.vy = 0
 	p2.x = 1400
 	p2.y = 500
+	p2.vx = 0
+	p2.vy = 0
 
-
-	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	#main game loop: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	while (gameOn == True):
 		clock.tick(60)
 		for event in pygame.event.get():
@@ -716,7 +718,7 @@ while running:
 					p1.RowNum = 0
 					p1.frameNum = 0
 
-		screen.blit(p1circ, (p1.blitpos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
+			screen.blit(p1circ, (p1.blitpos), (p1.frameWidth*p1.frameNum, p1.RowNum*p1.frameHeight, p1.frameWidth, p1.frameHeight))
 
 		
 			#PLAYER 2 DRAWING
@@ -847,7 +849,6 @@ while running:
 
 			screen.blit(p2circ, (p2.blitpos), (p2.frameWidth*p2.frameNum, p2.RowNum*p2.frameHeight, p2.frameWidth, p2.frameHeight))
 
-		
 		'''
 		for debugging:
 				pygame.draw.rect(screen, (100, 100, 100), (p1.x, p1.y, 10, 10))
@@ -858,4 +859,3 @@ while running:
 			screen.blit(aaa, (0, 0))
 
 		pygame.display.flip()
-

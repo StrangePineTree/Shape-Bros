@@ -26,8 +26,8 @@ class attack:
 					hitplayer.bumped = False
 					hitplayer.damage += self.damage
 					hitplayer.displayDamage += int(self.damage * 100)
-					hitplayer.vx = (1 if self.owner.direction == player.Player.RIGHT else -1) * (self.kbx * (1+ hitplayer.damage)) / 10 
-					hitplayer.vy = -(self.kby * (1+ hitplayer.damage)) / 10
+					hitplayer.vx = (1 if self.owner.direction == player.Player.RIGHT else -1) * ((self.kbx * (1+ hitplayer.damage/1.3)**2)) / 10 
+					hitplayer.vy = -((self.kby * (1+ hitplayer.damage/1.3)**1.5)) / 10
 					self.kby = 0
 					self.kbx = 0
 					self.hasHit = True
