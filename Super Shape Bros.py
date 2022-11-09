@@ -2,6 +2,7 @@
 #add square charectar
 #add a few more settings and maybe alternate control schemes(either read from a text file or if/else statements and a setting)
 #make everything scale with moniter size
+#match end screen
 
 #imports and pygame stuff
 aaaa = False
@@ -21,11 +22,15 @@ dropDown = False#variable for a dropdown menu in the main menu
 gameOn = False#main game loop
 menu = True#main menu loop
 select = False#charectar select menu loop
+endscreen = False#end screen loop
 #viariables for key ups
 qup = True
 oup = True
 eup = True
 oneup = True
+
+endscreen = True
+endedEarly = False#makes it so when a game is ended early the end screen is a tie 
 
 mapType = "flat"#the type of map (effects how players are killed)
 stocks = 3#the amount of stocks each player starts with by default
@@ -101,6 +106,7 @@ while running:
 							menu = False
 							running = False
 							select = False
+							endscreen = False
 						if b is stockupbutton and stocks < 99:
 							stocks+=1
 							if stocks == 0:
@@ -239,6 +245,7 @@ while running:
 				menu = False
 				running = False
 				select = False
+				endscreen = True
 			elif e.type == pygame.MOUSEBUTTONDOWN:#lets you interact with buttons when you click on them
 				for b in buttonlist:
 					if b.box.collidepoint(pygame.mouse.get_pos()):
@@ -325,6 +332,7 @@ while running:
 				menu = False
 				gameOn = False
 				running = False
+				endedEarly = True
 
 			if event.type == pygame.KEYUP:#checks of keys were released
 				if event.key == pygame.K_w:
@@ -859,3 +867,42 @@ while running:
 			screen.blit(aaa, (0, 0))
 
 		pygame.display.flip()
+
+	quitgame = button((sX/2-260, 750), (250, 130), (110,110,110))
+	startgame = button((sX/2+10, 750), (250, 130), (110,110,110))
+	
+	endbuttonlist: list[button] = []
+
+	endbuttonlist.append(quitgame)
+	endbuttonlist.append(startgame)
+
+	while endscreen:
+		for e in pygame.event.get():
+			if e.type == pygame.QUIT:
+				endscreen = False
+			elif e.type == pygame.MOUSEBUTTONDOWN:#interats with buttons when the mouse button is down
+				for b in endbuttonlist:
+					if b.box.collidepoint(pygame.mouse.get_pos()):
+						if b is startgame:
+							menu = True
+							select = True
+							gameOn = True
+						if b is quitgame:
+							endscreen = False
+							running = False
+
+		screen.fill((48, 52, 70))
+
+		for a in endbuttonlist:
+			a.draw()
+
+		font = pygame.font.Font(None, 70)
+		text = font.render(str("Quit"), True, (150, 255, 255))
+		screen.blit(text, (sX/2-185, 785))
+		text = font.render(str("Play again"), True, (150, 255, 255))
+		screen.blit(text, (sX/2+12, 785))
+		
+		pygame.display.flip()
+
+	endedEarly = False
+	#add any values that need to be reset between matches here
