@@ -11,7 +11,7 @@ import attacks
 import pygame
 import random
 pygame.init()
-screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN
+screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 sX,sY = screen.get_size()
 pygame.display.set_caption("Super Shape Bros")
 clock = pygame.time.Clock()
@@ -333,6 +333,7 @@ while running:
 				gameOn = False
 				running = False
 				endedEarly = True
+				
 
 			if event.type == pygame.KEYUP:#checks of keys were released
 				if event.key == pygame.K_w:
@@ -867,3 +868,42 @@ while running:
 			screen.blit(aaa, (0, 0))
 
 		pygame.display.flip()
+
+	quitgame = button((sX/2-260, 750), (250, 130), (110,110,110))
+	startgame = button((sX/2+10, 750), (250, 130), (110,110,110))
+
+	endbuttonlist: list[button] = []
+
+	endbuttonlist.append(quitgame)
+	endbuttonlist.append(startgame)
+
+	while endscreen:
+		for e in pygame.event.get():
+			if e.type == pygame.QUIT:
+				endscreen = False
+			elif e.type == pygame.MOUSEBUTTONDOWN:#interats with buttons when the mouse button is down
+				for b in endbuttonlist:
+					if b.box.collidepoint(pygame.mouse.get_pos()):
+						if b is startgame:
+							menu = True
+							select = True
+							gameOn = True
+						if b is quitgame:
+							endscreen = False
+							running = False
+
+		screen.fill((48, 52, 70))
+
+		for a in endbuttonlist:
+			a.draw()
+
+		font = pygame.font.Font(None, 70)
+		text = font.render(str("Quit"), True, (150, 255, 255))
+		screen.blit(text, (sX/2-185, 785))
+		text = font.render(str("Play again"), True, (150, 255, 255))
+		screen.blit(text, (sX/2+12, 785))
+
+		pygame.display.flip()
+
+	endedEarly = False
+	#add any values that need to be reset between matches here
