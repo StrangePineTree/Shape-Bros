@@ -10,7 +10,7 @@ import attacks
 import pygame
 import random
 pygame.init()
-screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN) #add screen scaling when in window mode
+screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN
 sX,sY = screen.get_size()
 pygame.display.set_caption("Super Shape Bros")
 clock = pygame.time.Clock()
